@@ -4,8 +4,8 @@ import Sidebar from "../Sidebar"
 const AboutPage = () => {
   return (
     <div style={{ display: 'flex', flexDirection: 'row' }}>
-      <Sidebar />
       <AboutContent />
+      <Sidebar />
     </div>
   )
 }
