@@ -1,14 +1,13 @@
-import './DropdownMenu.css'
+import './DropdownMenu.css';
 
-const DropdownMenu = ({ title }) => {
+const DropdownMenu = ({ title, items }) => {
   return (
     <div className="dropdown">
       <button className="dropbtn">{title}</button>
-      {/* Dropdown Content Placeholder */}
       <div className="dropdown-content">
-        <a href="#">Link 1</a>
-        <a href="#">Link 2</a>
-        <a href="#">Link 3</a>
+        {items.map((item, index) => (
+          <a key={index} href={item.href}>{item.label}</a>
+        ))}
       </div>
     </div>
   );

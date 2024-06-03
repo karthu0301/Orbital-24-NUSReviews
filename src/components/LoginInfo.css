@@ -4,17 +4,22 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 85vh;
-  padding: 10px;
-  gap: 20px;
+  min-height: 85vh; 
+  padding: 20px;
+  width: 100%;
 }
 
 .login-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 3vh;
-  padding: 20px;
+  gap: 15px;
+  padding: 4vw;
+  width: 100%;
+  max-width: 500px;
+  background: #f7f7f7;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  border-radius: 8px;
 }
 
 .login-container header {
@@ -24,50 +29,58 @@
 }
 
 .login-container p {
-  padding: 0 10px;
+  padding: 0 20px;
   font-size: 15px;
   color: black;
+  text-align: center;
 }
-  
-input {
-  width: 80%;
-  padding: 8px;
+
+.login-container input {
+  width: 100%;
+  padding: 1vh;
   margin: 8px 0;
   border: 1.5px solid #E0E0E0;
   border-radius: 4px;
 }
-  
-.continue-button, .create-account-button {
-  width: 70%;
-  padding: 5px;
+
+.login-container .login-button {
+  display: inline-block;
+  width: 100%;
+  padding: 1vh;
   color: white;
   background-color: #003882;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
   text-align: center;
-  margin-top: 10px;
+  margin-top: 1.5vh;
 }
-  
+
+.login-container .login-button:hover, .login-button:focus {
+  background-color: #0051ba; /* Slightly darker on hover/focus for feedback */
+}
+
 .divider {
   display: flex;
   align-items: center;
   width: 100%;
 }
-  
+
 .divider hr {
   flex-grow: 1;
   height: 1px;
   background-color: #999999;
   border: none;
+  margin-top: 15px;
 }
-  
+
 .divider p {
   padding: 0 10px;
   font-size: small;
   color: black;
+  margin-top: 15px;
 }
-  
+
 .terms {
   text-align: center;
   color: #828282;
@@ -77,5 +90,4 @@ input {
 .terms span {
   color: black;
   font-weight: 600;
-  cursor: pointer; /* Indicates the text is clickable */
-}  
+}

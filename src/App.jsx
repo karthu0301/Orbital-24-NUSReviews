@@ -5,6 +5,7 @@ import {
   RouterProvider
 } from 'react-router-dom'
 
+import './firebase-config';
 import MainLayout from './layouts/MainLayout';
 import HomePage from './components/pages/HomePage';
 import AboutPage from './components/pages/AboutPage';
