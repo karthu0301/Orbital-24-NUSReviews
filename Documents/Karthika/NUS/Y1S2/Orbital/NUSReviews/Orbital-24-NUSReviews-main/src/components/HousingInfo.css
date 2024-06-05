@@ -1,0 +1,30 @@
+.info-card {
+    width: 614px;
+    height: 397px;
+    display: flex; /* Make it a flex container */
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 24px; /* Space between items */
+  }
+  
+  .info-card-title {
+    align-self: stretch; /* Stretch title to full width */
+    color: black;
+    font-size: 40px;
+    font-family: Inter;
+    font-weight: 600;
+    line-height: 44px;
+    word-wrap: break-word;
+  }
+  
+  .info-card-item {
+    align-self: stretch;
+    color: #828282;
+    font-size: 24px;
+    font-family: Inter;
+    font-weight: 400;
+    line-height: 36px;
+    word-wrap: break-word;
+  }
+  

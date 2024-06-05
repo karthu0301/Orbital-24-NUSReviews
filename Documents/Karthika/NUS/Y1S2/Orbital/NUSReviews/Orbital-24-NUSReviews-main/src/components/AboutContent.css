@@ -1,0 +1,52 @@
+.about-main-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 40px;
+    gap: 20px;
+
+}
+  
+.about-text-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 60%;
+}
+  
+.about-text-content section {
+    display: flex;
+    flex-direction: column;
+    gap: 2vh;
+}
+  
+.about-text-content header {
+    color: black;
+    font-size: 40px;
+    font-family: 'Libre Franklin', sans-serif;
+    font-weight: 600;
+    font-size: 2.5vw;
+}
+  
+.about-text-content p {
+    color: #656565;
+    font-size: 1.5vw;
+    font-family: 'Libre Franklin', sans-serif;
+    font-weight: 400;
+}
+  
+.about-summary {
+    color: black !important;
+    font-size: 1.5vw;
+    font-family: 'Libre Franklin', sans-serif;
+    font-weight: 700 !important;
+}
+  
+.about-image {
+    max-width: 35%; 
+}
+  
+.about-image img {
+    width: 100%;
+    height: auto;
+}

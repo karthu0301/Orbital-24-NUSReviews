@@ -1,0 +1,48 @@
+.home-main-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;  /* Center the items vertically */
+  justify-content: center; /* Center the content horizontally */
+  min-height: 85vh; /* Ensure it covers at least 90% of the viewport height */
+  padding: 10px; /* Sufficient padding around the content */
+  gap: 20px; /* Space between the text block and the image */
+}
+
+.home-container {
+  max-width: 80%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 20px; /* Space between the heading and paragraphs */
+}
+
+.home-container header {
+  color: #003882; /* Adjusting color to match the style */
+  font-size: 3.5vw; /* Using viewport width for responsive font size */
+  font-family: 'Libre Franklin', sans-serif;
+  font-weight: 795;
+  margin-bottom: 37.5px;
+  text-align: center;
+}
+
+.home-container p {
+  color: #000;
+  font-size: 2vw;
+  font-family: 'Libre Franklin', sans-serif;
+  font-weight: 700;
+  margin: 0 0 10px; /* Adding a bottom margin to separate paragraphs */
+  text-align: center;
+}
+
+.background-image {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.4;
+  z-index: -1;
+  filter: brightness(0.75);
+}

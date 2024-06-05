@@ -1,0 +1,73 @@
+.user-profile {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  max-width: 80vw; /* Use viewport width for max width */
+  margin: auto;
+  padding: 2vw; /* Use viewport width for padding */
+  box-sizing: border-box;
+}
+
+.profile-picture {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 2vw;
+  margin-left: 2vw; /* Use viewport width for margin */
+  flex-shrink: 0;
+  max-width: 15vw; /* Use viewport width for max width */
+}
+
+.profile-picture-image img {
+  border-radius: 50%;
+  width: 12vw; /* Use viewport width for width */
+  height: 12vw; /* Use viewport width for height */
+}
+
+.profile-picture-edit {
+  color: #007bff;
+  font-size: 1vw; /* Use viewport width for font size */
+  margin-top: 1vw; /* Use viewport width for margin */
+  cursor: pointer;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  padding-left: 2vw; /* Use viewport width for padding */
+}
+
+.user-info-item {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5vh 0; /* Use viewport height for vertical padding */
+  border-bottom: 0.1vh solid #eaeaea; /* Use viewport height for border */
+}
+
+.user-info-item:last-child {
+  border-bottom: none;
+}
+
+.user-info-item-label {
+  font-weight: 500;
+  font-size: 1.5vw; /* Use viewport width for font size */
+  color: #000;
+}
+
+.user-info-item-value {
+  font-weight: 400;
+  font-size: 1.5vw; /* Use viewport width for font size */
+  color: #000;
+  flex-grow: 1;
+  text-align: right;
+}
+
+.user-info-item-icon {
+  color: #007bff;
+  font-size: 1.5vw; /* Use viewport width for font size */
+  cursor: pointer;
+  margin-left: 1vw; /* Use viewport width for margin */
+}
