@@ -57,15 +57,4 @@
 
 .verify-button:hover, .verify-button:focus {
     background-color: #0051ba; /* Slightly darker on hover/focus for feedback */
-  }
-  
-.terms {
-    text-align: center;
-    color: #828282;
-    margin-top: 10px;
-}
-  
-.terms span {
-    color: black;
-    font-weight: 600;
 }

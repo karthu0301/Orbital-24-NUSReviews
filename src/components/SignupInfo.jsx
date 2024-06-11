@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { useNavigate } from 'react-router-dom';
+import { getAuth, createUserWithEmailAndPassword, sendEmailVerification, signOut } from "firebase/auth";
 import './SignupInfo.css';
 
 const SignUpInfo = () => {
@@ -24,7 +24,17 @@ const SignUpInfo = () => {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       console.log("Signed up successfully:", userCredential.user);
-      navigate('/login/signup/verify'); // Navigate to verify route or other route you want
+
+      // Send verification email
+      await sendEmailVerification(userCredential.user);
+      console.log('Verification email sent to:', email);
+
+      // Sign out the user
+      await signOut(auth);
+      console.log('User signed out after registration');
+
+      alert("A verification email has been sent to your email address. Please verify your email to proceed.")
+      navigate('/login');
     } catch (error) {
       console.error("Error signing up:", error.message);
       alert(error.message); // Show error message to the user
@@ -59,9 +69,6 @@ const SignUpInfo = () => {
             required
           />
           <button type="submit" className="verify-button">Verify Email</button>
-          <p className="terms">
-            By clicking continue, you agree to our <span>Terms of Service</span> and <span>Privacy Policy</span>.
-          </p>
         </form>
       </div>
     </div>

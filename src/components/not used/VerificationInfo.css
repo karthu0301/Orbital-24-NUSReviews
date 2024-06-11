@@ -49,15 +49,3 @@ input {
     margin-top: 10px;
     text-decoration: none;
 }
-  
-.terms {
-    text-align: center;
-    color: #828282;
-    margin-top: 10px;
-}
-  
-.terms span {
-    color: black;
-    font-weight: 600;
-    cursor: pointer;
-}

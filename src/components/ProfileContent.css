@@ -1,0 +1,107 @@
+.profile-container {
+  display: flex;
+  align-items: center; /* Center the content horizontally */
+  justify-content: flex-start; /* Align items to the top */
+}
+
+.profile-container .sidebar {
+    width: 20%;
+}
+
+.profile-content {
+  padding: 20px;
+  flex: 1;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.profile-image {
+  width: 128px;
+  height: 128px;
+  border-radius: 1000px;
+  overflow: hidden;
+  background: #F7F7F7;
+}
+
+.edit-profile {
+  margin-left: 20px;
+}
+
+.edit-profile-text {
+  color: #0D99FF;
+  font-size: 14px;
+  font-family: 'Libre Franklin', sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.profile-stats {
+  margin-top: 10px;
+}
+
+.profile-stats div {
+  font-size: 14px;
+  font-family: 'Libre Franklin', sans-serif;
+  margin-top: 5px;
+}
+
+.profile-info {
+  width: 740px;
+}
+
+.profile-info-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.profile-info-label {
+  width: 200px;
+  font-size: 14px;
+  font-family: 'Libre Franklin', sans-serif;
+  font-weight: 500;
+  color: black;
+}
+
+.profile-info-value {
+  font-size: 14px;
+  font-family: 'Libre Franklin', sans-serif;
+  font-weight: 400;
+  color: black;
+  border: none;
+  background: none;
+  width: 300px;
+}
+
+.profile-info-value select {
+  width: 100%;
+  font-size: 14px;
+  font-family: 'Libre Franklin', sans-serif;
+  color: black;
+  background: none;
+  border: none;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+
+.save-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #0D99FF;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  font-family: 'Libre Franklin', sans-serif;
+  cursor: pointer;
+  align-self: flex-end;
+}
+
+.save-button:hover {
+  background-color: #0073e6;
+}

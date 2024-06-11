@@ -11,7 +11,8 @@ import HomePage from './components/pages/HomePage';
 import AboutPage from './components/pages/AboutPage';
 import LoginPage from './components/pages/LoginPage';
 import SignupPage from './components/pages/SignupPage';
-import VerificationPage from './components/pages/VerificationPage';
+import ForgotPasswordPage from './components/pages/ForgotPasswordPage';
+import ProfilePage from './components/pages/ProfilePage';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -20,7 +21,8 @@ const router = createBrowserRouter(
    <Route path='/about' element={<AboutPage />} />
    <Route path='/login' element={<LoginPage />} />
    <Route path='/login/signup' element={<SignupPage />} />
-   <Route path='/login/signup/verify' element={<VerificationPage />} />
+   <Route path='/forgot-password' element={<ForgotPasswordPage />} />
+   <Route path='/profile' element={<ProfilePage />} />
   </Route>
   )
 );
