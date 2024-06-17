@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { getAuth, sendPasswordResetEmail } from "firebase/auth";
-import './ForgotPasswordInfo.css'
+import './ForgotPasswordInfo.css';
 
 const ForgotPasswordInfo = () => {
   const [email, setEmail] = useState('');

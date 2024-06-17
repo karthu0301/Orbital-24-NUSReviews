@@ -3,7 +3,12 @@ import Sidebar from "../Sidebar";
 
 const ProfilePage = () => {
   return (
-      <ProfileContent />
+    <div className="profile-hold">
+      <div style={{ display: 'flex', flexDirection: 'row' }}>
+        <ProfileContent />
+        <Sidebar />
+      </div>
+    </div>
   );
 };
 

@@ -1,5 +1,5 @@
 import './Footer.css';
-import stampLogo from '../assets/images/logo.png'
+import stampLogo from '../assets/images/logo.png';
 
 const Footer = () => {
   return (

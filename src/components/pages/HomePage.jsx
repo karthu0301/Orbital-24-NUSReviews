@@ -3,30 +3,33 @@ import HomeContent from '../HomeContent';
 
 const HomePage = () => {
   const courseItems = [
-    { href: "#course1", label: "Information" },
-    { href: "#course2", label: "NUSMods" },
-    { href: "#course3", label: "Question Threads" },
-    { href: "#course4", label: "Files" }
+    { href: "/courses/guide", label: "Guide" },
+    { href: 'https://nusmods.com', label: "NUSMods" },
+    { href: "/courses/questions", label: "Question Threads" },
+    { href: "/courses/polls", label: "Polls" },
+    { href: "/courses/files", label: "Files" }
   ];
 
   const housingItems = [
-    { href: "#housing1", label: "NUS System" },
-    { href: "#housing2", label: "Information" },
-    { href: "#housing3", label: "Question Threads" },
-    { href: "#housing4", label: "Files" }
+    { href: "/housing/information", label: "Information" },
+    { href: "/housing/questions", label: "Question Threads" },
+    { href: "/housing/polls", label: "Polls" },
+    { href: "/houisng/files", label: "Files" }
   ];
 
   const foodItems = [
-    { href: "#food1", label: "Question Threads" },
-    { href: "#food2", label: "Files" }
+    { href: "/food/map", label: "Map" },
+    { href: "/food/questions", label: "Question Threads" },
+    { href: "/food/polls", label: "Polls" }, 
+    { href: "/food/files", label: "Files"}
   ];
 
   return (
     <div>
       <div className="sub-menus">
-        <DropdownMenu title="Courses" items={courseItems} />
-        <DropdownMenu title="Housing" items={housingItems} />
-        <DropdownMenu title="Food" items={foodItems} />
+        <DropdownMenu title="Courses" items={courseItems} navigateTo={'/courses'} />
+        <DropdownMenu title="Housing" items={housingItems} navigateTo={'/housing'} />
+        <DropdownMenu title="Food" items={foodItems} navigateTo={'/food'} />
       </div>
       <HomeContent />
     </div>
@@ -34,4 +37,3 @@ const HomePage = () => {
 }
 
 export default HomePage;
-

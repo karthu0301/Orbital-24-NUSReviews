@@ -1,5 +1,5 @@
-import AboutContent from "../AboutContent"
-import Sidebar from "../Sidebar"
+import AboutContent from "../AboutContent";
+import Sidebar from "../Sidebar";
 
 const AboutPage = () => {
   return (
@@ -10,4 +10,4 @@ const AboutPage = () => {
   )
 }
 
-export default AboutPage
+export default AboutPage;

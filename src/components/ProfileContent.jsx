@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import './ProfileContent.css';
-import Sidebar from './Sidebar';
 import { getAuth } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db, storage } from '../firebase-config';
@@ -13,7 +12,6 @@ const ProfileContent = () => {
     username: '',
     email: '',
     role: '',
-    levelOfStudy: '',
     courseOfStudy: '',
     yearOfStudy: '',
     additionalInfo: '',
@@ -119,22 +117,9 @@ const ProfileContent = () => {
               onChange={handleInputChange}
             >
               <option value="">Select Role</option>
-              <option value="Student">Student</option>
+              <option value="Student">Student (Undergraduate)</option>
               <option value="Alumni">Alumni</option>
               <option value="Staff">Staff</option>
-            </select>
-          </div>
-          <div className="profile-info-row">
-            <div className="profile-info-label">Level of Study</div>
-            <select
-              className="profile-info-value"
-              name="levelOfStudy"
-              value={profileData.levelOfStudy}
-              onChange={handleInputChange}
-            >
-              <option value="">Select Level of Study</option>
-              <option value="Undergraduate">Undergraduate</option>
-              <option value="Postgraduate">Postgraduate</option>
             </select>
           </div>
           <div className="profile-info-row">
@@ -176,7 +161,6 @@ const ProfileContent = () => {
           <button className="save-button" onClick={handleSave}>Save</button>
         </div>
       </div>
-      <Sidebar />
     </div>
   );
 };

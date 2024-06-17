@@ -46,6 +46,8 @@ const Navbar = () => {
                             {dropdownOpen && (
                                 <div className="dropdown-menu">
                                     <Link to="/profile" className="dropdown-item" onClick={() => setDropdownOpen(false)}>Profile</Link>
+                                    <Link to="/all-files" className="dropdown-item" onClick={() =>setDropdownOpen(false)}>All Files</Link>
+                                    <Link to="/polls" className="dropdown-item" onClick={() =>setDropdownOpen(false)}>Polls</Link>
                                     <button className="dropdown-item" onClick={handleSignOut}>Log Out</button>
                                 </div>
                             )}

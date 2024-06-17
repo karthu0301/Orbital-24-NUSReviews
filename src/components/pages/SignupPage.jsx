@@ -1,4 +1,4 @@
-import SignupInfo from "../SignupInfo"
+import SignupInfo from "../SignupInfo";
 
 const SignupPage = () => {
   return (
@@ -8,4 +8,4 @@ const SignupPage = () => {
   )
 }
 
-export default SignupPage
+export default SignupPage;

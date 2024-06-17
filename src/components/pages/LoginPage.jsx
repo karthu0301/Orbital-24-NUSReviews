@@ -1,4 +1,4 @@
-import LoginInfo from "../LoginInfo"
+import LoginInfo from "../LoginInfo";
 
 const LoginPage = () => {
   return (
@@ -8,4 +8,4 @@ const LoginPage = () => {
   )
 }
 
-export default LoginPage
+export default LoginPage;

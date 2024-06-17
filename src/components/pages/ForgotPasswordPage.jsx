@@ -1,4 +1,4 @@
-import ForgotPasswordInfo from '../ForgotPasswordInfo'
+import ForgotPasswordInfo from '../ForgotPasswordInfo';
 
 const ForgotPasswordPage = () => {
   return (
@@ -8,4 +8,4 @@ const ForgotPasswordPage = () => {
   )
 }
 
-export default ForgotPasswordPage
+export default ForgotPasswordPage;

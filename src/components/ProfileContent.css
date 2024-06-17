@@ -1,16 +1,28 @@
-.profile-container {
-  display: flex;
-  align-items: center; /* Center the content horizontally */
-  justify-content: flex-start; /* Align items to the top */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Libre Franklin', sans-serif;
 }
 
-.profile-container .sidebar {
-    width: 20%;
+.profile-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 80%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
 .profile-content {
-  padding: 20px;
   flex: 1;
+  max-width: 800px;
+  margin-right: 20px;
+}
+
+.profile-hold .sidebar {
+  width: 18%;
 }
 
 .profile-header {
@@ -22,7 +34,7 @@
 .profile-image {
   width: 128px;
   height: 128px;
-  border-radius: 1000px;
+  border-radius: 50%;
   overflow: hidden;
   background: #F7F7F7;
 }
@@ -34,7 +46,6 @@
 .edit-profile-text {
   color: #0D99FF;
   font-size: 14px;
-  font-family: 'Libre Franklin', sans-serif;
   font-weight: 600;
   cursor: pointer;
 }
@@ -45,12 +56,11 @@
 
 .profile-stats div {
   font-size: 14px;
-  font-family: 'Libre Franklin', sans-serif;
   margin-top: 5px;
 }
 
 .profile-info {
-  width: 740px;
+  width: 100%;
 }
 
 .profile-info-row {
@@ -63,14 +73,12 @@
 .profile-info-label {
   width: 200px;
   font-size: 14px;
-  font-family: 'Libre Franklin', sans-serif;
   font-weight: 500;
   color: black;
 }
 
 .profile-info-value {
   font-size: 14px;
-  font-family: 'Libre Franklin', sans-serif;
   font-weight: 400;
   color: black;
   border: none;
@@ -81,13 +89,11 @@
 .profile-info-value select {
   width: 100%;
   font-size: 14px;
-  font-family: 'Libre Franklin', sans-serif;
   color: black;
   background: none;
   border: none;
   border-bottom: 1px solid #e0e0e0;
 }
-
 
 .save-button {
   margin-top: 20px;
