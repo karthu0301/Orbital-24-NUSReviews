@@ -160,6 +160,7 @@ const ProfileContent = () => {
           </div>
           <button className="save-button" onClick={handleSave}>Save</button>
         </div>
+        <note>Note: Completing your profile is optional, but it helps other users learn more about your credibility and background.</note>
       </div>
     </div>
   );

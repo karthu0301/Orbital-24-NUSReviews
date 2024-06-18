@@ -30,7 +30,7 @@ const LoginInfo = () => {
 
   const handleLogin = async (event) => {
     event.preventDefault();
-    setErrorMessage(''); // Reset the error message
+    setErrorMessage(''); // Reset error message
 
     if (!isNusEmail(email)) {
       setErrorMessage('Only valid NUS emails are allowed.');
@@ -124,6 +124,7 @@ const LoginInfo = () => {
         <div className="microsoft-button" onClick={handleMicrosoftLogin}>
           <img src={microsoftSignIn} alt="Sign in with Microsoft" />
         </div>
+        <note>Note: You can freely explore the website without logging in. An account is only required to participate in answering question threads.</note>
       </div>
     </div>
   );

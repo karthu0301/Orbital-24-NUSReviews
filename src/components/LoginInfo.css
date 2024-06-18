@@ -35,6 +35,12 @@
   text-align: center;
 }
 
+.login-container note {
+  font-size: 10px;
+  color: #003882;
+  font-weight: 600;
+}
+
 .login-container input {
   width: 100%;
   padding: 1vh;
