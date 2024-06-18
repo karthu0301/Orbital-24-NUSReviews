@@ -30,7 +30,7 @@ const LoginInfo = () => {
 
   const handleLogin = async (event) => {
     event.preventDefault();
-    setErrorMessage(''); // Reset error message
+    setErrorMessage(''); // Reset the error message
 
     if (!isNusEmail(email)) {
       setErrorMessage('Only valid NUS emails are allowed.');
