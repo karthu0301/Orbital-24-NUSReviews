@@ -14,6 +14,7 @@ import LoginPage from './components/pages/LoginPage';
 import SignupPage from './components/pages/SignupPage';
 import ForgotPasswordPage from './components/pages/ForgotPasswordPage';
 import ProfilePage from './components/pages/ProfilePage';
+import AllPollsPage from './components/pages/AllPollsPage';
 import CoursesHomePage from './components/pages/courses-subpages/CoursesHomePage';
 import CoursesGuidePage from './components/pages/courses-subpages/CoursesGuidePage';
 import HousingHomePage from './components/pages/housing-subpages/HousingHomePage';
@@ -43,6 +44,9 @@ const router = createBrowserRouter(
     <Route path='/food' element={<AltLayout />}>
       <Route index element={<FoodHomePage />} />
       <Route path='/food/map' element={<FoodMapPage />} />
+    </Route>
+    <Route path='/polls' element={<AltLayout />}>
+      <Route index element={<AllPollsPage />} />
     </Route>
   </>
   )

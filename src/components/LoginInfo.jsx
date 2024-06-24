@@ -124,7 +124,7 @@ const LoginInfo = () => {
         <div className="microsoft-button" onClick={handleMicrosoftLogin}>
           <img src={microsoftSignIn} alt="Sign in with Microsoft" />
         </div>
-        <note>Note: You can freely explore the website without logging in. An account is only required to participate in answering question threads.</note>
+        <note>Note: You can freely explore the website without logging in. An account is only required to answer question threads, share files or create polls.</note>
       </div>
     </div>
   );
