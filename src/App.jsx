@@ -17,10 +17,13 @@ import ProfilePage from './components/pages/ProfilePage';
 import AllPollsPage from './components/pages/AllPollsPage';
 import CoursesHomePage from './components/pages/courses-subpages/CoursesHomePage';
 import CoursesGuidePage from './components/pages/courses-subpages/CoursesGuidePage';
+import CoursesPollPage from './components/pages/courses-subpages/CoursesPollPage';
 import HousingHomePage from './components/pages/housing-subpages/HousingHomePage';
 import HousingInformationPage from './components/pages/housing-subpages/HousingInformationPage';
+import HousingPollPage from './components/pages/housing-subpages/HousingPollPage';
 import FoodHomePage from './components/pages/food-subpages/FoodHomePage';
 import FoodMapPage from './components/pages/food-subpages/FoodMapPage';
+import FoodPollPage from './components/pages/food-subpages/FoodPollPage';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -36,14 +39,17 @@ const router = createBrowserRouter(
     <Route path='/courses' element={<AltLayout />}>
       <Route index element={<CoursesHomePage />} />
       <Route path='/courses/guide' element={<CoursesGuidePage />} />
+      <Route path='/courses/polls' element={<CoursesPollPage />} />
     </Route>
     <Route path='/housing' element={<AltLayout />}>
       <Route index element={<HousingHomePage />} />
       <Route path='/housing/information' element={<HousingInformationPage />} />
+      <Route path='/housing/polls' element={<HousingPollPage />} />
     </Route>
     <Route path='/food' element={<AltLayout />}>
       <Route index element={<FoodHomePage />} />
       <Route path='/food/map' element={<FoodMapPage />} />
+      <Route path='/food/polls' element={<FoodPollPage />} />
     </Route>
     <Route path='/polls' element={<AltLayout />}>
       <Route index element={<AllPollsPage />} />

@@ -7,7 +7,6 @@
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     margin: 40px auto;
-    margin-left: 32vw;
     flex-direction: column;
     width: 100%;
     max-width: 500px;
@@ -56,21 +55,24 @@
     background-color: #d4d4d4;
 }
 
-/* .poll-checkbox {
+.poll-checkbox {
     margin: 4px 0;
     align-items: center;
     justify-content: start;
+    cursor: pointer;
 }
 
 .poll-checkbox input {
     margin-right: 10px;
+    cursor: pointer;
 }
 
-.poll-checkbox label {
+.poll-checkbox span {
     font-family: 'Libre Franklin', sans-serif;
     font-size: 14px;
     color: #666;
-} */
+    cursor: pointer;
+}
 
 .poll-form-header {
     font-family: 'Libre Franklin', sans-serif;

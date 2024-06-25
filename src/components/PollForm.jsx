@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { db } from '../firebase-config';
 import { collection, addDoc } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
@@ -6,13 +6,19 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
 import './PollForm.css'; // Assuming CSS is in this file
 
-const PollForm = () => {
+const PollForm = ({ fixedCategory }) => {
     const [title, setTitle] = useState('');
     const [options, setOptions] = useState(['', '']);
     const [category, setCategory] = useState('');
-    // const [anonymous, setAnonymous] = useState(false);
+    const [multiple, setMultiple] = useState(false);
     const [errors, setErrors] = useState({});
     const auth = getAuth();
+
+    useEffect(() => {
+        if (fixedCategory) {
+            setCategory(fixedCategory);
+        }
+    }, [fixedCategory]);
 
     const handleOptionChange = (index, event) => {
         const newOptions = [...options];
@@ -45,17 +51,14 @@ const PollForm = () => {
         if (!validateForm()) return;
 
         const user = auth.currentUser;
-        if (!user) {
-            alert("Please log in to create a poll.");
-            return;
-        }
+        const creatorId = user ? user.uid : 'not_registered_user';
 
         const pollData = {
             title,
             options: options.filter(option => option.trim() !== '').map(option => ({ option, votes: 0 })),
             category,
-            // anonymous,
-            creatorId: user.uid,
+            multiple,
+            creatorId,
             createdAt: new Date()
         };
 
@@ -64,7 +67,7 @@ const PollForm = () => {
             alert('Poll created successfully!');
             setTitle('');
             setOptions(['', '']);
-            // setAnonymous(false);
+            setMultiple(false);
             setErrors({});
         } catch (error) {
             console.error("Error adding document: ", error);
@@ -91,21 +94,23 @@ const PollForm = () => {
                         <FontAwesomeIcon icon={faMinus} />
                     </button>
                 )}
-                <div>
+                {!fixedCategory && (
+                    <div>
                     <label>Category:</label>
                     <select value={category} onChange={e => setCategory(e.target.value)} className="poll-input poll-select">
                         <option value="">Select a Category</option>
-                        <option value="course">Course</option>
+                        <option value="courses">Courses</option>
                         <option value="housing">Housing</option>
                         <option value="food">Food</option>
                         <option value="others">Others</option>
                     </select>
                 </div>
+                )}
                 {errors.category && <div className="error">{errors.category}</div>}
-                {/* <div className="poll-checkbox">
-                    <input type="checkbox" checked={anonymous} onChange={e => setAnonymous(e.target.checked)} />
-                    <label>Anonymous poll?</label>
-                </div> */}
+                <label className="poll-checkbox">
+                    <input type="checkbox" checked={multiple} onChange={e => setMultiple(e.target.checked)} />
+                    <span>Allow multiple responses?</span>
+                </label>
                 <button type="submit" className="poll-button">Create Poll</button>
             </form>
         </div>

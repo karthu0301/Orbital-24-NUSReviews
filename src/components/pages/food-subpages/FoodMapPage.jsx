@@ -34,7 +34,7 @@ const FoodMapPage = () => {
       try {
         const response = await axios.get(overpassUrl, { params: { data: query } });
         const data = response.data.elements.map(place => ({
-          name: place.tags.name,
+          name: place.tags.name || "Unnamed Food Place",
           lat: place.lat,
           lng: place.lon
         }));

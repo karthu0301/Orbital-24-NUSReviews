@@ -34,10 +34,11 @@ const Navbar = () => {
 
     return (
         <nav className="navbar">
-            <div className="logo">NUSReviews</div>
+            <Link to='/' className="logo">NUSReviews</Link>
             <div className="navbar-links">
-                <Link to="/" className="nav-item">Home</Link>
                 <Link to="/about" className="nav-item">About</Link>
+                <Link to="/all-files" className="nav-item">Files</Link>
+                <Link to="/polls" className="nav-item">Polls</Link>
                 {
                     user 
                     ? (
@@ -46,8 +47,6 @@ const Navbar = () => {
                             {dropdownOpen && (
                                 <div className="dropdown-menu">
                                     <Link to="/profile" className="dropdown-item" onClick={() => setDropdownOpen(false)}>Profile</Link>
-                                    <Link to="/all-files" className="dropdown-item" onClick={() =>setDropdownOpen(false)}>All Files</Link>
-                                    <Link to="/polls" className="dropdown-item" onClick={() =>setDropdownOpen(false)}>Polls</Link>
                                     <button className="dropdown-item" onClick={handleSignOut}>Log Out</button>
                                 </div>
                             )}
