@@ -3,6 +3,8 @@ import { useParams } from 'react-router-dom';
 import { doc, getDoc, addDoc, collection, getDocs, updateDoc, serverTimestamp, query, orderBy } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../../firebase-config';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFileAlt } from '@fortawesome/free-solid-svg-icons';
 import '../QuestionsThread.css';
 
 const FoodQuestionsThread = () => {
@@ -11,6 +13,7 @@ const FoodQuestionsThread = () => {
   const [replies, setReplies] = useState([]);
   const [newReply, setNewReply] = useState('');
   const [attachedFile, setAttachedFile] = useState(null);
+  const [questionFileUrl, setQuestionFileUrl] = useState(null);
   const [isAnonymous, setIsAnonymous] = useState(false);
 
   useEffect(() => {
@@ -20,6 +23,7 @@ const FoodQuestionsThread = () => {
         const questionDoc = await getDoc(questionRef);
         if (questionDoc.exists()) {
           setQuestion(questionDoc.data().text);
+          setQuestionFileUrl(questionDoc.data().fileUrl);
         } else {
           console.log("No such document!");
         }
@@ -95,6 +99,13 @@ const FoodQuestionsThread = () => {
       <div className="question-section">
         <h2>Question</h2>
         <p>{question}</p>
+      </div>
+      <div className="question-files-section">
+        {questionFileUrl && (
+          <a href={questionFileUrl} target="_blank" rel="noopener noreferrer">
+            <FontAwesomeIcon icon={faFileAlt} /> View Attached File
+          </a>
+        )}
       </div>
       <div className="replies-section-h">Replies</div>
       <div className="reply-container">

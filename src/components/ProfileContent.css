@@ -96,6 +96,10 @@ body {
   border-bottom: 1px solid #e0e0e0;
 }
 
+.profile-info .error {
+  color: rgb(179, 3, 3);
+}
+
 .save-button {
   margin-top: 20px;
   padding: 10px 20px;
@@ -117,5 +121,12 @@ body {
   margin-top: 10px;
   font-size: 12px;
   color: #003882;
+  font-weight: 600;
+}
+
+.profile-content newnote {
+  margin-top: 10px;
+  font-size: 12px;
+  color: rgb(179, 3, 3);
   font-weight: 600;
 }

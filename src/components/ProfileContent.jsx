@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import './ProfileContent.css';
-import { getAuth } from 'firebase/auth';
+import { getAuth, updateProfile } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db, storage } from '../firebase-config';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
@@ -9,7 +9,7 @@ const ProfileContent = () => {
   const [user, setUser] = useState(null);
   const [profileData, setProfileData] = useState({
     name: '',
-    username: '',
+    displayName: '',
     email: '',
     role: '',
     courseOfStudy: '',
@@ -20,6 +20,7 @@ const ProfileContent = () => {
     contributionsThisSemester: 0,
     eligibilityForBonus: 'No'
   });
+  const [errors, setErrors] = useState({});
   const auth = getAuth();
 
   useEffect(() => {
@@ -52,8 +53,27 @@ const ProfileContent = () => {
     }));
   };
 
+  const validateForm = () => {
+    const newErrors = {};
+    if (!profileData.displayName.trim()) {
+      newErrors.displayName = 'Username is required';
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSave = async () => {
+    if (!validateForm()) return;
+
     if (user) {
+      // Update display name in Firebase Authentication
+      if (profileData.displayName) {
+        await updateProfile(user, {
+          displayName: profileData.displayName
+        });
+      }
+      
+      // Update profile data in Firestore
       const docRef = doc(db, 'users', user.uid);
       await setDoc(docRef, profileData, { merge: true });
       alert('Profile updated successfully');
@@ -93,7 +113,7 @@ const ProfileContent = () => {
         <div className="profile-info">
           {[
             { label: 'Name', name: 'name', value: profileData.name, type: 'text' },
-            { label: 'Username', name: 'username', value: profileData.username, type: 'text' },
+            { label: 'Display Name', name: 'displayName', value: profileData.displayName, type: 'text' },
             { label: 'Email', name: 'email', value: profileData.email, type: 'text', disabled: true }, // Disabled to prevent editing
           ].map((item, index) => (
             <div key={index} className="profile-info-row">
@@ -106,6 +126,7 @@ const ProfileContent = () => {
                 onChange={handleInputChange}
                 disabled={item.disabled || false} // Condition to disable email field
               />
+              {errors[item.name] && <div className="error">{errors[item.name]}</div>}
             </div>
           ))}
           <div className="profile-info-row">
@@ -160,7 +181,10 @@ const ProfileContent = () => {
           </div>
           <button className="save-button" onClick={handleSave}>Save</button>
         </div>
-        <note>Note: Completing your profile is optional, but it helps other users learn more about your credibility and background.</note>
+        <div> 
+          <note>Note: Completing your profile is optional, but it helps other users learn more about your credibility and background.</note>
+        </div>
+        <newnote>* A Display Name is required, it will be shown when you make contributions that are not anonymous.</newnote>
       </div>
     </div>
   );

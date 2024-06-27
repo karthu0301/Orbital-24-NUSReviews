@@ -5,7 +5,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { db, storage } from '../../firebase-config';
 import { collection, query, where, getDocs, addDoc, serverTimestamp } from 'firebase/firestore';
-
+import { getAuth } from 'firebase/auth';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 const HousingQuestionsList = () => {
   const [questions, setQuestions] = useState([]);
@@ -70,14 +71,22 @@ const HousingQuestionsList = () => {
     e.preventDefault();
     if (!validateForm()) return;
 
-    if (newQuestion.trim() !== '') {
-      let fileUrl = null;
-      if (attachedFile) {
-        const fileRef = storage.ref(`replies/${attachedFile.name}`);
-        const uploadTaskSnapshot = await fileRef.put(attachedFile);
-        fileUrl = await uploadTaskSnapshot.ref.getDownloadURL();
-      }
+    const auth = getAuth(); // Get the auth instance
+    const user = auth.currentUser; // Get the current user
+    let asker = 'Anonymous'; // Default to 'Anonymous'
 
+    if (user && !isAnonymous) {
+      asker = user.displayName || user.name || user.email || 'Registered User'; // Use displayName, email, or a fallback
+    }
+  
+    let fileUrl = null;
+    if (newQuestion.trim() !== '') {
+      if (attachedFile) {
+        const fileRef = ref(storage, `replies/${attachedFile.name}`); // Corrected reference creation
+        const uploadTaskSnapshot = await uploadBytes(fileRef, attachedFile); // Corrected upload syntax
+        fileUrl = await getDownloadURL(uploadTaskSnapshot.ref); // Corrected URL retrieval
+      }
+  
       try {
         const docRef = await addDoc(collection(db, "housingQuestions"), {
           text: newQuestion,
@@ -86,7 +95,7 @@ const HousingQuestionsList = () => {
           timestamp: serverTimestamp(),
           fileUrl: fileUrl,
           answered: false,
-          askedBy: "username or userID"  
+          askedBy: asker  
         });
         const newQuestionObj = {
           id: docRef.id,
@@ -94,7 +103,7 @@ const HousingQuestionsList = () => {
           category: category,
           timestamp: new Date(),
           answered: false,
-          askedBy: "username or userID",
+          askedBy: asker,
           fileUrl: fileUrl
         };
         setQuestions(prevQuestions => [newQuestionObj, ...prevQuestions]);
@@ -107,8 +116,8 @@ const HousingQuestionsList = () => {
       }
     }
   };
-
-    const handleFileChange = (e) => {
+  
+  const handleFileChange = (e) => {
     setAttachedFile(e.target.files[0]);
   };
 

@@ -5,6 +5,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { db, storage } from '../../firebase-config';
 import { collection, query, where, getDocs, addDoc, serverTimestamp } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 const CoursesQuestionsList = () => {
   const [questions, setQuestions] = useState([]);
@@ -69,12 +71,21 @@ const CoursesQuestionsList = () => {
     e.preventDefault();
     if (!validateForm()) return;
 
+    const auth = getAuth(); // Get the auth instance
+    const user = auth.currentUser; // Get the current user
+    let asker = 'Anonymous'; // Default to 'Anonymous'
+
+    if (user && !isAnonymous) {
+      console.log("User Info:", user);
+      asker = user.displayName || user.email || 'Registered User'; // Use displayName, email, or a fallback
+    }
+
+    let fileUrl = null;
     if (newQuestion.trim() !== '') {
-      let fileUrl = null;
       if (attachedFile) {
-        const fileRef = storage.ref(`coursesReplies/${attachedFile.name}`);
-        const uploadTaskSnapshot = await fileRef.put(attachedFile);
-        fileUrl = await uploadTaskSnapshot.ref.getDownloadURL();
+        const fileRef = ref(storage, `coursesReplies/${attachedFile.name}`); // Corrected reference creation
+        const uploadTaskSnapshot = await uploadBytes(fileRef, attachedFile); // Corrected upload syntax
+        fileUrl = await getDownloadURL(uploadTaskSnapshot.ref); // Corrected URL retrieval
       }
 
       try {
@@ -85,7 +96,7 @@ const CoursesQuestionsList = () => {
           timestamp: serverTimestamp(),
           fileUrl: fileUrl,
           answered: false,
-          askedBy: "username or userID"  
+          askedBy: asker  
         });
         const newQuestionObj = {
           id: docRef.id,
@@ -93,7 +104,7 @@ const CoursesQuestionsList = () => {
           category: category,
           timestamp: new Date(),
           answered: false,
-          askedBy: "username or userID",
+          askedBy: asker,
           fileUrl: fileUrl
         };
         setQuestions(prevQuestions => [newQuestionObj, ...prevQuestions]);
@@ -131,7 +142,7 @@ const CoursesQuestionsList = () => {
     computing: 'Computing',
     humanitiesandsciences: 'Humanities & Sciences',
     medicine: 'Medicine',
-    dentistry: 'Application Matters',
+    dentistry: 'Dentistry',
     law: 'Law',
     music: 'Music',
     nursing: 'Nursing',
@@ -214,6 +225,7 @@ const CoursesQuestionsList = () => {
               <th>Date</th>
               <th>Answered</th>
               <th>Asked By</th>
+              <th>Attached File</th>
             </tr>
           </thead>
           <tbody>
@@ -228,6 +240,7 @@ const CoursesQuestionsList = () => {
                 <td>{new Date(question.timestamp?.seconds * 1000).toLocaleDateString()}</td>
                 <td>{question.answered ? 'Yes' : 'No'}</td>
                 <td>{question.askedBy}</td>
+                <td>{question.fileUrl && <a href={question.fileUrl} target="_blank" rel="noopener noreferrer">View Attachment</a>}</td>
               </tr>
             ))}
           </tbody>
