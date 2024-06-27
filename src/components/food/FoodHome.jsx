@@ -22,13 +22,7 @@ const items = [
     title: 'Polls',
     description: 'Create and vote on anonymous polls to share and gauge opinions on various topics.',
     link: '/food/polls'
-  },
-  {
-    icon: faFileAlt,
-    title: 'Files',
-    description: 'Find any files shared in course-related question threads.',
-    link: '/food/files'
-  },
+  }
 ];
 
 const Item = ({ icon, title, description, link }) => (
@@ -46,6 +40,12 @@ const Item = ({ icon, title, description, link }) => (
 const FoodHome = () => (
   <div className="subpage-home-container">
     <img src={pic} alt="NUS" className="background-image" />
+    <div className="subpage-home-item">
+      <div className="item-content">
+        <h3 className="item-title">Food</h3>
+        <p className="item-description">Curious about food options near you? Explore the diverse cuisines around NUS. Take a look at your choices and discover what your fellow NUS-goers think about them here.</p>
+      </div>
+    </div>
     {items.map((item) => (
       <Item key={item.title} icon={item.icon} title={item.title} description={item.description} link={item.link} />
     ))}

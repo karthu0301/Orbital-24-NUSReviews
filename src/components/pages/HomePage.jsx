@@ -7,21 +7,18 @@ const HomePage = () => {
     { href: 'https://nusmods.com', label: "NUSMods" },
     { href: "/courses/questions", label: "Question Threads" },
     { href: "/courses/polls", label: "Polls" },
-    { href: "/courses/files", label: "Files" }
   ];
 
   const housingItems = [
     { href: "/housing/information", label: "Information" },
     { href: "/housing/questions", label: "Question Threads" },
     { href: "/housing/polls", label: "Polls" },
-    { href: "/houisng/files", label: "Files" }
   ];
 
   const foodItems = [
     { href: "/food/map", label: "Map" },
     { href: "/food/questions", label: "Question Threads" },
     { href: "/food/polls", label: "Polls" }, 
-    { href: "/food/files", label: "Files"}
   ];
 
   return (

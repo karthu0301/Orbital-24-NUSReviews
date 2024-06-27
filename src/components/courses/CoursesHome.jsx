@@ -1,7 +1,7 @@
 import '../SubpagesHome.css';
 import pic from '../../assets/images/UT.jpg';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBookOpen, faCalendarAlt, faPersonCircleQuestion, faPoll, faFileAlt } from '@fortawesome/free-solid-svg-icons';
+import { faBookOpen, faCalendarAlt, faPersonCircleQuestion, faPoll } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 
 const items = [
@@ -28,13 +28,7 @@ const items = [
     title: 'Polls',
     description: 'Create and vote on anonymous polls to share and gauge opinions on various topics.',
     link: '/courses/polls'
-  },
-  {
-    icon: faFileAlt,
-    title: 'Files',
-    description: 'Find any files shared in course-related question threads.',
-    link: '/courses/files'
-  },
+  }
 ];
 
 const Item = ({ icon, title, description, link }) => (
@@ -52,6 +46,12 @@ const Item = ({ icon, title, description, link }) => (
 const CoursesHome = () => (
   <div className="subpage-home-container">
     <img src={pic} alt="NUS" className="background-image" />
+    <div className="subpage-home-item">
+      <div className="item-content">
+        <h3 className="item-title">Courses</h3>
+        <p className="item-description">New to NUS undergraduate life? Confused about what to do and where to find answers? Welcome to your one-stop shop for all your course-related needs!</p>
+      </div>
+    </div>
     {items.map((item) => (
       <Item key={item.title} icon={item.icon} title={item.title} description={item.description} link={item.link} />
     ))}

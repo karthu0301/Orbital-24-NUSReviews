@@ -16,7 +16,6 @@ const Sidebar = () => {
         { name: 'NUSMods', link: 'https://nusmods.com' },
         { name: 'Question Threads', link: '/courses/questions' },
         { name: 'Polls', link: '/courses/polls' },
-        { name: 'Files', link: '/courses/files' }
       ]
     },
     {
@@ -27,7 +26,6 @@ const Sidebar = () => {
         { name: 'Information', link: '/housing/information' },
         { name: 'Question Threads', link: '/housing/questions' },
         { name: 'Polls', link: '/housing/polls' },
-        { name: 'Files', link: '/housing/files' }
       ]
     },
     {
@@ -38,7 +36,6 @@ const Sidebar = () => {
         { name: 'Map', link: '/food/map' },
         { name: 'Question Threads', link: '/food/questions' },
         { name: 'Polls', link: '/food/polls' },
-        { name: 'Files', link: '/food/files' }
       ]
     }
   ];

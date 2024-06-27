@@ -12,6 +12,10 @@
     max-width: 500px;
 }
 
+.poll-form-container .error {
+    color: rgb(179, 3, 3);
+}
+
 .poll-input, .poll-select {
     width: 100%;
     padding: 10px 20px;

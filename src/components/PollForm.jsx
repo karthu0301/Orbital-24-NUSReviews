@@ -36,10 +36,10 @@ const PollForm = ({ fixedCategory }) => {
 
     const validateForm = () => {
         const newErrors = {};
-        if (!title.trim()) newErrors.title = 'Title is required';
-        if (!category) newErrors.category = 'Category is required';
+        if (!title.trim()) newErrors.title = 'Title is required!';
+        if (!category) newErrors.category = 'Category is required!';
         const filledOptions = options.filter(option => option.trim() !== '');
-        if (filledOptions.length < 2) newErrors.options = 'At least two options are required';
+        if (filledOptions.length < 2) newErrors.options = 'At least two options are required!';
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
