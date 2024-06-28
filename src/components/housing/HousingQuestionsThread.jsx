@@ -113,7 +113,7 @@ const HousingQuestionsThread = () => {
         {replies.map((reply, index) => (
           <div key={index} className="reply">
             <p>{reply.text}</p>
-            {reply.fileUrl && <a href={reply.fileUrl} target="_blank" rel="noopener noreferrer">View Attachment</a>}
+            {reply.fileUrl && <a href={reply.fileUrl} target="_blank" rel="noopener noreferrer" className='attach-text'>View Attachment</a>}
           </div>
         ))}
       </div>

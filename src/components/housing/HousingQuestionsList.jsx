@@ -215,6 +215,7 @@ const HousingQuestionsList = () => {
               <th>Date</th>
               <th>Answers</th>
               <th>Asked By</th>
+              <th>Attached File</th>
             </tr>
           </thead>
           <tbody>
@@ -229,6 +230,7 @@ const HousingQuestionsList = () => {
                 <td>{new Date(question.timestamp.seconds * 1000).toLocaleDateString()}</td>
                 <td>{question.answered ? 'Yes' : 'None'}</td>
                 <td>{question.askedBy}</td>
+                <td>{question.fileUrl ? <a href={question.fileUrl} target="_blank" rel="noopener noreferrer">View Attachment</a> : "No File"}</td>
               </tr>
             ))}
           </tbody>

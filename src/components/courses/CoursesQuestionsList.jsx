@@ -240,7 +240,7 @@ const CoursesQuestionsList = () => {
                 <td>{new Date(question.timestamp?.seconds * 1000).toLocaleDateString()}</td>
                 <td>{question.answered ? 'Yes' : 'No'}</td>
                 <td>{question.askedBy}</td>
-                <td>{question.fileUrl && <a href={question.fileUrl} target="_blank" rel="noopener noreferrer">View Attachment</a>}</td>
+                <td>{question.fileUrl ? <a href={question.fileUrl} target="_blank" rel="noopener noreferrer">View Attachment</a> : "No File"}</td>
               </tr>
             ))}
           </tbody>
