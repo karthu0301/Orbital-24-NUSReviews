@@ -1,0 +1,113 @@
+.collapsible-sidebar {
+  width: 22.5%;
+  height: 100%;
+  background: #D97300;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  position: fixed;
+  right: 0;
+  top: 0;
+  transition: transform 0.3s ease;
+  transform: translateX(100%);
+  z-index: 1000;
+}
+
+.collapsible-sidebar.expanded {
+  transform: translateX(0);
+}
+
+.collapsible-sidebar-header {
+  font-size: 1.2vw;
+  font-family: 'Libre Franklin', sans-serif;
+  font-weight: 600;
+  color: black;
+  margin-bottom: 8px;
+}
+
+.collapsible-sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 1.2vw;
+  padding: 0.7vw 1.2vw;
+  background: white;
+  border-radius: 8px;
+  color: black;
+  font-size: 1vw;
+  margin-bottom: 4px; /* space between items */
+  font-family: 'Libre Franklin', sans-serif;
+  font-weight: 550;
+  cursor: pointer;
+}
+
+.collapsible-sidebar-item-container {
+  position: relative;
+}
+
+.collapsible-sidebar-item img, .collapsible-sidebar-item svg {
+  width: 1.15vw;
+  height: auto;
+}
+
+.collapsible-sidebar-item-container {
+  position: relative;
+}
+
+.collapsible-sidebar-submenu {
+  padding-left: 2.5vw;
+  margin-top: 4px;
+  display: none;
+  flex-direction: column;
+}
+
+.collapsible-sidebar-subitem {
+  display: block;
+  padding: 0.5vw 0;
+  text-decoration: none;
+  color: #000000;
+  font-size: 0.95vw;
+  font-weight: 600;
+  font-family: 'Libre Franklin', sans-serif;
+}
+
+.collapsible-sidebar-subitem:hover {
+  color: #3b3b3b;
+}
+
+.collapsible-sidebar-item-container.active .sidebar-submenu {
+  display: flex;
+}
+
+.collapsible-sidebar-item a:hover {
+  color: #3b3b3b;
+}
+
+.sidebar-toggle-button {
+  position: fixed;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: #f4a261;
+  padding: 6px;
+  cursor: pointer;
+  z-index: 1100;
+
+}
+
+.dim-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease;
+  z-index: 900;
+}
+
+.dim-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}

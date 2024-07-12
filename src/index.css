@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'Libre Barcode 128 Text';
+  src: url('fonts/LibreBarcode128Text-Regular.ttf');
+  font-weight: 400;
+  font-style: normal;
+}
+.libre-barcode-128-text-regular {
+  font-family: 'Libre Barcode 128 Text', sans-serif; /* Fallback to sans-serif if the custom font fails to load */
+}
