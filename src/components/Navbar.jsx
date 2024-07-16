@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom';
 import './Navbar.css';
 import { useState, useEffect } from 'react';
+import { doc, onSnapshot } from '@firebase/firestore';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { db } from '../firebase-config';
 
 const Navbar = () => {
     const [user, setUser] = useState(null);
@@ -32,6 +34,26 @@ const Navbar = () => {
         setDropdownOpen(false);
     };
 
+    const [ShowNotificationDot, setShowNotificationDot] = useState(false);
+
+    useEffect(() => {
+        if (user) {
+          const userRef = doc(db, 'users', user.uid);
+          const unsubscribe = onSnapshot(userRef, (doc) => {
+            if (doc.data().hasUnreadNotifications) {
+              // Show notification dot
+              setShowNotificationDot(true);
+            } else {
+              // Hide notification dot
+              setShowNotificationDot(false);
+            }
+          });
+      
+          return () => unsubscribe(); // Cleanup subscription on component unmount
+        }
+      }, [user]);
+      
+
     return (
         <nav className="navbar">
             <Link to='/' className="logo">NUSReviews</Link>
@@ -47,10 +69,12 @@ const Navbar = () => {
                             {dropdownOpen && (
                                 <div className="dropdown-menu">
                                     <Link to="/profile" className="dropdown-item" onClick={() => setDropdownOpen(false)}>Profile</Link>
+                                    {ShowNotificationDot && <span className='notification-dot-in'></span>}
                                     <Link to="/saved-threads" className="dropdown-item" onClick={() => setDropdownOpen(false)}>Saved Threads</Link>
                                     <button className="dropdown-item" onClick={handleSignOut}>Log Out</button>
                                 </div>
                             )}
+                            {ShowNotificationDot && <span className='notification-dot-more'></span>}
                         </div>
                     ) 
                     : <Link to="/login" className="login-button">Login</Link>

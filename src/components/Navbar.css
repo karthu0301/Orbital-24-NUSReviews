@@ -85,3 +85,24 @@ body, html {
 .dropdown-item:hover {
     background-color: #ddd;
 }
+
+.navbar .notification-dot-more {
+    position: absolute;
+    height: 12px;
+    width: 12px;
+    background-color: #d30f06;
+    border-radius: 50%;
+    right: -2.5px;
+    top: -2.5px;
+}
+
+.navbar .notification-dot-in {
+    position: absolute;
+    height: 11px;
+    width: 11px;
+    background-color: #d30f06;
+    border-radius: 50%;
+    margin-left: 5px;
+    right: 8px;
+    top: 50px;
+}

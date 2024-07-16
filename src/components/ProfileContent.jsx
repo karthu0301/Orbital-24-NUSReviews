@@ -19,7 +19,8 @@ const ProfileContent = () => {
     flaggedContributions: 0,
     contributionsThisSemester: 0,
     eligibilityForBonus: 'No',
-    lastViewedThreads: {}
+    lastViewedThreads: {},
+    hasUnreadNotifications: false    
   });
   const [errors, setErrors] = useState({});
   const auth = getAuth();

@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { db } from '../../firebase-config';
-import { collection, getDoc, doc as firestoreDoc, getDocs, deleteDoc } from 'firebase/firestore';
+import { collection, getDoc, doc as firestoreDoc, getDocs, updateDoc, deleteDoc } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged, } from 'firebase/auth';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import '../SavedThreads.css'
 
 const SavedThreadsPage = () => {
@@ -11,6 +13,19 @@ const SavedThreadsPage = () => {
   const [filterTopic, setFilterTopic] = useState('');
   const [user, setUser] = useState(null);
   const [isAuthReady, setIsAuthReady] = useState(false);
+  const [userLastViewed, setUserLastViewed] = useState({});
+
+  useEffect(() => {
+      if (user) {
+          const userRef = firestoreDoc(db, "users", user.uid);
+          getDoc(userRef).then(docSnapshot => {
+              if (docSnapshot.exists()) {
+                  const userData = docSnapshot.data();
+                  setUserLastViewed(userData.lastViewedThreads || {});
+              }
+          });
+      }
+  }, [user]);
 
   const categoryMap = {
     housingQuestions: 'Housing',
@@ -58,53 +73,65 @@ const SavedThreadsPage = () => {
     return () => unsubscribe();
   }, []);
 
-  useEffect(() => {
-    const fetchQuestions = async () => {
-      if (!user) return;
+useEffect(() => {
+  const fetchQuestions = async () => {
+    if (!user) return;
 
-      const remindersRef = collection(db, "users", user.uid, "reminders");
-      const reminderDocs = await getDocs(remindersRef);
-      const questionsPromises = reminderDocs.docs.map(async (reminderDoc) => {
-        const reminderData = reminderDoc.data();
-        const questionRef = firestoreDoc(db, reminderData.questionCollection, reminderData.questionId);
-        const questionDoc = await getDoc(questionRef);
-        return questionDoc.exists() ? { 
-            ...questionDoc.data(), 
-            id: questionDoc.id, 
-            collection: reminderData.questionCollection,
-            topic: categoryMap[reminderData.questionCollection],
-            pageRoute: categoryMapRoute[reminderData.questionCollection],
-            reminderId: reminderDoc.id,
-            reminderTimestamp: reminderData.timestamp.seconds
-         } : null;
-      });
+    let hasUnread = false; // Initialize the flag for each fetch cycle
+    console.log("Started fetching questions...");
 
-      const fetchedQuestions = await Promise.all(questionsPromises);
-      setQuestions(fetchedQuestions.filter(q => q !== null));
-    };
+    const remindersRef = collection(db, "users", user.uid, "reminders");
+    const reminderDocs = await getDocs(remindersRef);
 
-    if (isAuthReady && user) {
-        fetchQuestions();
-    }
-}, [isAuthReady, user]);
+    const questionsPromises = reminderDocs.docs.map(async (reminderDoc) => {
+      const reminderData = reminderDoc.data();
+      const questionRef = firestoreDoc(db, reminderData.questionCollection, reminderData.questionId);
+      const questionDoc = await getDoc(questionRef);
+    
+      if (questionDoc.exists()) {
+        const questionData = questionDoc.data();
+        const questionId = questionDoc.id;
+        const lastViewedTimestamp = userLastViewed[questionId] ? userLastViewed[questionId].seconds : 0;
+        const lastReplyTimestamp = questionData.lastReplyTimestamp ? questionData.lastReplyTimestamp.seconds : 0;
+    
+        if (lastReplyTimestamp > lastViewedTimestamp) {
+          hasUnread = true;
+        }
+    
+        return {
+          ...questionData,
+          id: questionId,
+          collection: reminderData.questionCollection,
+          topic: categoryMap[reminderData.questionCollection],
+          pageRoute: categoryMapRoute[reminderData.questionCollection],
+          reminderId: reminderDoc.id,
+          reminderTimestamp: reminderData.timestamp.seconds
+        };
+      }
+      return null;
+    });    
+
+    const fetchedQuestions = await Promise.all(questionsPromises);
+    setQuestions(fetchedQuestions.filter(q => q !== null));
+
+    console.log("hasUnread final value:", hasUnread);
+
+    // Ensure all promises complete before updating the user document
+    const userRef = firestoreDoc(db, "users", user.uid);
+    await updateDoc(userRef, {
+      hasUnreadNotifications: hasUnread
+    });
+  };
+
+  if (isAuthReady && user) {
+      fetchQuestions();
+  }
+}, [isAuthReady, user, userLastViewed]); // Make sure to correctly list all dependencies
+
 
   const checkForNewReplies = (question, lastViewed) => {
     return question.lastReplyTimestamp > lastViewed;
   };
-
-  const [userLastViewed, setUserLastViewed] = useState({});
-
-  useEffect(() => {
-      if (user) {
-          const userRef = firestoreDoc(db, "users", user.uid);
-          getDoc(userRef).then(docSnapshot => {
-              if (docSnapshot.exists()) {
-                  const userData = docSnapshot.data();
-                  setUserLastViewed(userData.lastViewedThreads || {});
-              }
-          });
-      }
-  }, [user]);
 
   const getLastReplyTimestamp = (question) => question.lastReplyTimestamp ? question.lastReplyTimestamp.seconds || question.lastReplyTimestamp : 0;
 
@@ -150,18 +177,21 @@ const SavedThreadsPage = () => {
           <option value="foodQuestions">Food</option>
         </select>
       </div>
-      {filteredQuestions.map(question => (
-        <div key={question.id} className="question-card">
-          <Link to={`/${question.pageRoute}/questions/${question.id}`}>
-            {question.text.length > 200 ? `${question.text.slice(0, 200)}...` : question.text}
-          </Link>
-          {checkForNewReplies(question, userLastViewed[question.id]) && <span className="notification-dot"></span>}
-          <p>{question.topic || 'unknown'}</p>
-          <p>{subcategoryMap[question.category] || 'unknown'}</p>
-          <p>{question.askedBy || 'unkown'}</p>
-          <button onClick={() => removeReminder(question.reminderId)} className='remove-reminder'>Remove from saved</button>
-        </div>
-      ))}
+      <div className='question-cards-container'>
+        {filteredQuestions.map(question => (
+          <div key={question.id} className="question-card">
+            <Link to={`/${question.pageRoute}/questions/${question.id}`}>
+              {question.text.length > 100 ? `${question.text.slice(0, 100)}...` : question.text}
+            </Link>
+            {checkForNewReplies(question, userLastViewed[question.id]) && <FontAwesomeIcon icon={faExclamationCircle} className='notification-dot'/>}
+            <p>Subpage: {question.topic || 'unknown'}</p>
+            <p>Category: {subcategoryMap[question.category] || 'unknown'}</p>
+            <p>Asked By: {question.askedBy || 'unkown'}</p>
+            <button onClick={() => removeReminder(question.reminderId)} className='remove-reminder'>Remove from saved</button>
+          </div>
+        ))}  
+      </div>
+      
     </div>
   );
 };
