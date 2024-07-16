@@ -3,9 +3,10 @@ import { useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileAlt } from '@fortawesome/free-solid-svg-icons';
 import '../QuestionsThread.css';
-import { doc, getDoc, addDoc, collection, getDocs, updateDoc, serverTimestamp, query, orderBy } from 'firebase/firestore';
+import { doc, getDoc, addDoc, deleteDoc, collection, getDocs, updateDoc, serverTimestamp, query, orderBy, where } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../../firebase-config';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 const HousingQuestionsThread = () => {
   const { questionId } = useParams();
@@ -15,6 +16,9 @@ const HousingQuestionsThread = () => {
   const [attachedFile, setAttachedFile] = useState(null);
   const [questionFileUrl, setQuestionFileUrl] = useState(null);
   const [isAnonymous, setIsAnonymous] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupData, setPopupData] = useState(null);
+  const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
 
   useEffect(() => { 
     const fetchQuestionAndReplies = async () => {
@@ -44,6 +48,25 @@ const HousingQuestionsThread = () => {
     }
   }, [questionId]);
 
+  useEffect(() => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    if (user && questionId) {
+      const userRef = doc(db, 'users', user.uid);
+      const lastViewedKey = `lastViewedThreads.${questionId}`;
+
+      // Update the last viewed timestamp for this thread
+      updateDoc(userRef, {
+        [lastViewedKey]: serverTimestamp()
+      }).then(() => {
+        console.log('Last viewed timestamp updated successfully.');
+      }).catch(error => {
+        console.error('Failed to update last viewed timestamp:', error);
+      });
+    }
+  }, [questionId]);
+
   const handleReplyChange = (e) => {
     setNewReply(e.target.value);
   };
@@ -54,6 +77,24 @@ const HousingQuestionsThread = () => {
 
   const handleReplySubmit = async (e) => {
     e.preventDefault();
+
+    const auth = getAuth(); // Get the auth instance
+    const user = auth.currentUser; // Get the current user
+    let answerer = null;
+    let answerUid = null;
+
+    if (user) {
+      answerer = user.displayName || user.name || 'Registered User';
+      answerUid = user.uid;
+    } else {
+      alert('Please Log in to proceed.');
+      return;
+    }
+
+    if (isAnonymous) {
+      answerer = 'Anonymous';
+    }
+
     if (newReply.trim() !== '') {
       let fileUrl = null;
       if (attachedFile) {
@@ -72,9 +113,21 @@ const HousingQuestionsThread = () => {
           text: newReply,
           fileUrl,
           anonymous: isAnonymous,
-          timestamp: serverTimestamp()
+          timestamp: serverTimestamp(),
+          answeredBy: answerer,
+          answeredByUid: answerUid
         });
+
+        const newReplyObj = {
+          id: docRef.id, 
+          text: newReply,
+          timestamp: new Date(),
+          answeredBy: answerer,
+          answeredByUid: answerUid,
+          fileUrl: fileUrl
+        }
   
+        setReplies(prevReplies => [...prevReplies, newReplyObj]);
         setNewReply('');
         setAttachedFile(null);
         setIsAnonymous(false);
@@ -84,17 +137,130 @@ const HousingQuestionsThread = () => {
           const questionRef = doc(db, 'housingQuestions', questionId);
           await updateDoc(questionRef, { answered: true });
         }
-  
-        // Fetch the updated list of replies
-        const updatedRepliesSnapshot = await getDocs(query(repliesRef, orderBy('timestamp')));
-        setReplies(updatedRepliesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+
+        // Update last reply timestamp
+        await updateDoc(doc(db, "housingQuestions", questionId), {
+          lastReplyTimestamp: serverTimestamp()
+        });
+
       } catch (error) {
         console.error("Failed to submit reply:", error);
       }
     }
   };
-  
 
+  const handleMouseEnter = async (answeredBy, answeredByUid, event) => {
+    if (answeredBy !== 'Anonymous' && answeredByUid) {
+      try {
+        const userDoc = await getDoc(doc(db, 'users', answeredByUid));
+        if (userDoc.exists()) {
+          const profileInfo = userDoc.data();
+          setPopupData(profileInfo);
+          const rect = event.target.getBoundingClientRect();
+          setPopupPosition({ top: rect.top + window.scrollY, left: rect.left + window.scrollX + rect.width });
+          setShowPopup(true);
+        } else {
+          console.log("No such document!");
+        }
+      } catch (error) {
+        console.error("Error fetching user profile: ", error);
+      }
+    }
+  };
+
+  const handleMouseLeave = () => {
+    setShowPopup(false);
+    setPopupData(null);  // Clear the popup data when mouse leaves
+  };
+
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+    return unsubscribe;  // This will unsubscribe when the component unmounts
+  }, []);  
+
+  const [reminderId, setReminderId] = useState(null);
+
+  useEffect(() => {
+      const fetchReminderState = async () => {
+          if (user) {
+              const remindersRef = collection(db, "users", user.uid, "reminders");
+              const querySnapshot = await getDocs(query(remindersRef, where("questionId", "==", questionId)));
+              const reminders = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+              const reminder = reminders.find(r => r.questionId === questionId);
+              setReminderId(reminder ? reminder.id : null);
+          }
+      };
+
+      fetchReminderState();
+  }, [user, questionId]);
+
+  // const handleRemindMeClick = async () => {
+  //   if (!user) {
+  //     alert("Please log in to save polls and get reminders!");
+  //     return;
+  //   }
+  
+  //   try {
+  //     const remindersRef = collection(db, "users", user.uid, "reminders");
+  //     await addDoc(remindersRef, {
+  //       questionCollection: 'housingQuestions',
+  //       questionId: questionId,
+  //       timestamp: serverTimestamp()
+  //     });
+  //     alert("Thread saved! You will be notified when new replies are added.");
+
+  //     const questionRef = doc(db, 'housingQuestions', questionId);
+  //     await updateDoc(questionRef, { reminderSet: true });
+  //   } catch (error) {
+  //     console.error("Error saving thread:", error);
+  //   }
+  // };
+
+  const handleRemindMeClick = async () => {
+    if (!user) {
+      alert("Please log in to save threads and get reminders!");
+      return;
+    }
+
+    try {
+      if (reminderId) {
+        // If there's already a reminder set, remove it
+        await removeReminder(reminderId);
+        setReminderId(null);  // Reset the reminder state
+      } else {
+        // No reminder set, so add one
+        const remindersRef = collection(db, "users", user.uid, "reminders");
+        const docRef = await addDoc(remindersRef, {
+          questionCollection: 'housingQuestions',
+          questionId: questionId,
+          timestamp: serverTimestamp()
+        });
+        setReminderId(docRef.id);
+        alert("Thread saved! You will be notified when new replies are added.");
+      }
+    } catch (error) {
+      console.error("Error handling reminder:", error);
+      alert("Failed to handle reminder.");
+    }
+  };
+
+  const removeReminder = async (reminderId) => { 
+    try {
+      const reminderRef = doc(db, "users", user.uid, "reminders", reminderId);
+      await deleteDoc(reminderRef);
+      alert("Thread unsaved! You will no longer be notified when replies are added");
+
+    } catch (error) {
+      console.error("Error removing reminder:", error);
+      alert("Failed to remove reminder.");
+    }
+  };
+  
   return (
     <div className="question-thread-page">
       <div className="question-section">
@@ -108,12 +274,36 @@ const HousingQuestionsThread = () => {
           </a>
         )}
       </div>
+      <button onClick={handleRemindMeClick} className='reminder-button'>
+        {reminderId ? "Remove Reminder" : "Remind Me!"}
+      </button>
       <div className="replies-section-h">Replies</div>
       <div className="reply-container">
-        {replies.map((reply, index) => (
-          <div key={index} className="reply">
-            <p>{reply.text}</p>
+        {replies.map( reply => (
+          <div key={reply.id} className="reply">
+            <p className='text'>{reply.text}</p>
             {reply.fileUrl && <a href={reply.fileUrl} target="_blank" rel="noopener noreferrer" className='attach-text'>View Attachment</a>}
+            <p>{new Date(reply.timestamp.seconds * 1000).toLocaleString()}</p>
+            <p
+              onMouseEnter={(event) => handleMouseEnter(reply.answeredBy, reply.answeredByUid, event)}
+              onMouseLeave={handleMouseLeave}
+            >
+              {reply.answeredBy || 'Registered User'}
+            </p>
+            {showPopup && popupData && (
+              <div className="popup" style={{ top: popupPosition.top, left: popupPosition.left }}>
+                <img src={popupData.profileImage || "https://via.placeholder.com/64x64"} alt="Profile" className="popup-profile-image" />
+                <p>Name: {popupData.name || "Unknown"}</p>
+                <p>Role: {popupData.role || "Unknown"}</p>
+                {popupData.role === "Student" && (
+                  <>
+                    <p>Course: {popupData.courseOfStudy || "Unknown"}</p>
+                    <p>Year: {popupData.yearOfStudy || "Unknown"}</p>
+                  </>
+                )}
+                <p>Additional: {popupData.additionalInfo || "Unknown"}</p>
+              </div>
+            )}
           </div>
         ))}
       </div>

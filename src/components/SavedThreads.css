@@ -1,0 +1,15 @@
+.saved-page {
+  padding: 20px;
+}
+
+.saved-page .question-card {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  margin-top: 10px;
+}
+
+.saved-page .select {
+  margin-right: 10px;
+  padding: 5px;
+}

@@ -11,3 +11,12 @@
 .libre-barcode-128-text-regular {
   font-family: 'Libre Barcode 128 Text', sans-serif; /* Fallback to sans-serif if the custom font fails to load */
 }
+
+.notification-dot {
+  height: 10px;
+  width: 10px;
+  background-color: #FF0000;
+  border-radius: 50%;
+  display: inline-block;
+  margin-left: 5px;
+}

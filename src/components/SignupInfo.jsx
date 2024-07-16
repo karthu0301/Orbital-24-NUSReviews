@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getAuth, createUserWithEmailAndPassword, sendEmailVerification, signOut } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, sendEmailVerification, signOut, updateProfile } from "firebase/auth";
 import './SignupInfo.css';
 
 const SignUpInfo = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [displayName, setDisplayName] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const navigate = useNavigate();
   const auth = getAuth();
@@ -21,9 +22,18 @@ const SignUpInfo = () => {
       alert("Passwords do not match!");
       return;
     }
+    if (!displayName.trim()) {
+      alert("Display Name is required.");
+      return;
+    }
+
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       console.log("Signed up successfully:", userCredential.user);
+
+      // Update the display name in Firebase Auth
+      await updateProfile(userCredential.user, { displayName: displayName });
+      console.log('Display name updated:', displayName);
 
       // Send verification email
       await sendEmailVerification(userCredential.user);
@@ -52,6 +62,13 @@ const SignUpInfo = () => {
             placeholder="email@u.nus.edu"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <input
+            type="text"
+            placeholder="enter display name"
+            value={displayName}
+            onChange={(e) => setDisplayName(e.target.value)}
             required
           />
           <input

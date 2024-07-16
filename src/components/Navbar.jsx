@@ -47,6 +47,7 @@ const Navbar = () => {
                             {dropdownOpen && (
                                 <div className="dropdown-menu">
                                     <Link to="/profile" className="dropdown-item" onClick={() => setDropdownOpen(false)}>Profile</Link>
+                                    <Link to="/saved-threads" className="dropdown-item" onClick={() => setDropdownOpen(false)}>Saved Threads</Link>
                                     <button className="dropdown-item" onClick={handleSignOut}>Log Out</button>
                                 </div>
                             )}

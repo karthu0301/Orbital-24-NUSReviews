@@ -16,6 +16,7 @@ import ForgotPasswordPage from './components/pages/ForgotPasswordPage';
 import ProfilePage from './components/pages/ProfilePage';
 import AllPollsPage from './components/pages/AllPollsPage';
 import AllFilesPage from './components/pages/AllFilesPage';
+import SavedThreadsPage from './components/pages/SavedThreadsPage';
 import CoursesHomePage from './components/pages/courses-subpages/CoursesHomePage';
 import CoursesGuidePage from './components/pages/courses-subpages/CoursesGuidePage';
 import CoursesPollPage from './components/pages/courses-subpages/CoursesPollPage';
@@ -69,6 +70,9 @@ const router = createBrowserRouter(
     </Route>
     <Route path='/all-files' element={<AltLayout />}>
       <Route index element={<AllFilesPage />} />
+    </Route>
+    <Route path='/saved-threads' element={<AltLayout />}>
+      <Route index element={<SavedThreadsPage />} />
     </Route>
   </>
   )

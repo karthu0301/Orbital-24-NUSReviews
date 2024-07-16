@@ -1,3 +1,7 @@
+body {
+    overflow-x: hidden; /* Prevent horizontal overflow */
+}
+
 .food-questions-list {
     padding: 20px;
     margin-top: -40px;
@@ -19,8 +23,11 @@
     border: 1px solid #ccc;
     padding: 5px 10px;
     margin-bottom: 20px;
-    width: 50%;
-    height:10%;
+    margin-left: 20px;
+    height: 12vh;
+    min-width: 56%;
+    max-width: 6vw;
+    font-size: 1.1vw;
 }
   
 .search-container input {
@@ -44,7 +51,6 @@
     margin-bottom: 50px;
     width: 100vw;
 }
-
 
 .form-container input[type="text"],
 .form-container input[type="file"] {
@@ -94,67 +100,8 @@
     width: 75vw;
 }
 
-.category-select .error {
-    color: rgb(179, 3, 3);
-}
-
-.anonymous-checkbox {
-    margin-top: 10px;
-}
-  
-.anonymous-checkbox label {
-    margin-left: 5px;
-}
-
-.headings-container {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start; 
-    width: 100vw; 
-    color: black;
-}
-
-.headings-container h1:first-child {
-    margin-right: auto; 
-}
-  
-.headings-container h1:not(:first-child) {
-    flex: 1; 
-    text-align: center; 
-}
-
 .questions-list table {
     width: 100%;
     border-collapse: collapse;
     table-layout: fixed; /* Ensures equal spacing */
-}
-  
-.questions-list th, .questions-list td {
-    border: 1px solid #ccc;
-    padding: 8px;
-    text-align: left;
-    width: 20%; /* Allocate equal width to each column if there are 5 columns */
-}
-  
-.questions-list th {
-    background-color: #f4f4f4;
-}
-
-.questions-list td {
-    background-color: #fff;
-}
-  
-thead tr th {
-    position: sticky;
-    top: 0;
-    background-color: #f4f4f4;
-}
-
-.questions-list a {
-    color: #0056b3;
-    text-decoration: none;
-}
-  
-.questions-list a:hover {
-    text-decoration: underline;
 }

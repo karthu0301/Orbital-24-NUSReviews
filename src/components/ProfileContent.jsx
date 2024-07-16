@@ -15,10 +15,11 @@ const ProfileContent = () => {
     courseOfStudy: '',
     yearOfStudy: '',
     additionalInfo: '',
-    profileImage: '', // Added profileImage field
+    profileImage: '',
     flaggedContributions: 0,
     contributionsThisSemester: 0,
-    eligibilityForBonus: 'No'
+    eligibilityForBonus: 'No',
+    lastViewedThreads: {}
   });
   const [errors, setErrors] = useState({});
   const auth = getAuth();
@@ -30,6 +31,7 @@ const ProfileContent = () => {
         setUser(user);
         setProfileData((prevData) => ({
           ...prevData,
+          displayName: user.displayName, //Prefill displayName
           email: user.email // Prefill email field
         }));
         const docRef = doc(db, 'users', user.uid);
@@ -53,17 +55,26 @@ const ProfileContent = () => {
     }));
   };
 
-  const validateForm = () => {
+  const validateForm = async () => {
     const newErrors = {};
+    let isValid = true;
+  
     if (!profileData.displayName.trim()) {
       newErrors.displayName = 'Username is required';
+      isValid = false;
     }
+
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    return isValid;
   };
+  
 
   const handleSave = async () => {
-    if (!validateForm()) return;
+    const isFormValid = await validateForm();
+    if (!isFormValid) {
+      alert('Please correct the errors before saving.');
+      return; // Stop the execution if the form is not valid
+    }
 
     if (user) {
       // Update display name in Firebase Authentication

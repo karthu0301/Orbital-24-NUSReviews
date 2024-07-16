@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { db, storage } from '../../firebase-config';
-import { collection, query, where, getDocs, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, query, where, getDoc, doc, getDocs, addDoc, serverTimestamp } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
@@ -19,6 +19,33 @@ const CoursesQuestionsList = () => {
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [category, setCategory] = useState('');
   const [errors, setErrors] = useState({});
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupData, setPopupData] = useState(null);
+  const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
+
+  const handleMouseEnter = async (askerUid, event) => {
+    if (askerUid !== null) {
+      try {
+        const userDoc = await getDoc(doc(db, 'users', askerUid));
+        if (userDoc.exists()) {
+          const profileInfo = userDoc.data();
+          setPopupData(profileInfo);
+          const rect = event.target.getBoundingClientRect();
+          setPopupPosition({ top: rect.top + window.scrollY, left: rect.left + window.scrollX + rect.width });
+          setShowPopup(true);
+        } else {
+          console.log("No such document!");
+        }
+      } catch (error) {
+        console.error("Error fetching user profile: ", error);
+      }
+    }
+  };
+
+  const handleMouseLeave = () => {
+    setShowPopup(false);
+    setPopupData(null);  // Clear the popup data when mouse leaves
+  };
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -74,10 +101,11 @@ const CoursesQuestionsList = () => {
     const auth = getAuth(); // Get the auth instance
     const user = auth.currentUser; // Get the current user
     let asker = 'Anonymous'; // Default to 'Anonymous'
+    let askerUid = null;
 
     if (user && !isAnonymous) {
-      console.log("User Info:", user);
-      asker = user.displayName || user.email || 'Registered User'; // Use displayName, email, or a fallback
+      asker = user.displayName || user.name || 'Registered User'; // Use displayName, name or a fallback
+      askerUid = user.uid;
     }
 
     let fileUrl = null;
@@ -96,7 +124,10 @@ const CoursesQuestionsList = () => {
           timestamp: serverTimestamp(),
           fileUrl: fileUrl,
           answered: false,
-          askedBy: asker  
+          askedBy: asker, 
+          askedByUid: askerUid,
+          reminderSet: false,
+          lastReplyTimestamp: serverTimestamp()  
         });
         const newQuestionObj = {
           id: docRef.id,
@@ -105,8 +136,12 @@ const CoursesQuestionsList = () => {
           timestamp: new Date(),
           answered: false,
           askedBy: asker,
-          fileUrl: fileUrl
+          askedByUid: askerUid, 
+          fileUrl: fileUrl,
+          reminderSet: false,
+          lastReplyTimestamp: serverTimestamp()  
         };
+
         setQuestions(prevQuestions => [newQuestionObj, ...prevQuestions]);
         setNewQuestion('');
         setCategory('');
@@ -182,38 +217,42 @@ const CoursesQuestionsList = () => {
       </div>
       <div className="form-container">
         <form onSubmit={handleQuestionSubmit} className="form">
-          <input
-            id="newQuestion"
-            name="newQuestion"
-            type="text"
-            value={newQuestion}
-            onChange={e => setNewQuestion(e.target.value)}
-            placeholder="Ask a new question..."
-            className="text-input"
-          />
-          <button type="submit">Create new thread</button>
-          <input type="file" onChange={handleFileChange} />
-          <div className="category-select">
-            <select
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-            >
-              <option value="">Select a category</option>
-              {categories.map(cat => (
-                <option key={cat.id} value={cat.id}>{cat.name}</option>
-              ))}
-            </select>
-            {errors.category && <div className="error">{errors.category}</div>}
-          </div>
-          <div className="anonymous-checkbox">
+          <div className="input-container">
             <input
-              type="checkbox"
-              id="anonymous"
-              checked={isAnonymous}
-              onChange={(e) => setIsAnonymous(e.target.checked)}
+              id="newQuestion"
+              name="newQuestion"
+              type="text"
+              value={newQuestion}
+              onChange={e => setNewQuestion(e.target.value)}
+              placeholder="Ask a new question..."
+              className="text-input"
             />
-            <label htmlFor="anonymous">Anonymous Question?</label>
-          </div>    
+            <input type="file" onChange={handleFileChange} />
+            <div className="category-select">
+              <select
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+              >
+                <option value="">Select a category</option>
+                {categories.map(cat => (
+                  <option key={cat.id} value={cat.id}>{cat.name}</option>
+                ))}
+              </select>
+              {errors.category && <div className="error">{errors.category}</div>}
+            </div>
+            <div className="anonymous-checkbox">
+              <input
+                type="checkbox"
+                id="anonymous"
+                checked={isAnonymous}
+                onChange={(e) => setIsAnonymous(e.target.checked)}
+              />
+              <label htmlFor="anonymous">Anonymous Question?</label>
+            </div>
+          </div>
+          <div className="button-container">
+            <button type="submit">Create new thread</button>
+          </div>
         </form>
       </div>
       <div className="questions-list">
@@ -223,28 +262,53 @@ const CoursesQuestionsList = () => {
               <th>Thread Title</th>
               <th>Category</th>
               <th>Date</th>
-              <th>Answered</th>
+              <th>Replies</th>
               <th>Asked By</th>
               <th>Attached File</th>
+              { getAuth().currentUser &&
+                <th>Reminder</th>
+              }
             </tr>
           </thead>
           <tbody>
             {questions.map(question => (
               <tr key={question.id}>
                 <td>
-                <Link to={`/courses/questions/${question.id}`}>
+                  <Link to={`/courses/questions/${question.id}`}>
                     {question.text.length > 100 ? `${question.text.slice(0, 100)}...` : question.text}
-                </Link>
+                  </Link>
                 </td>
                 <td>{categoryMap[question.category]}</td>
-                <td>{new Date(question.timestamp?.seconds * 1000).toLocaleDateString()}</td>
-                <td>{question.answered ? 'Yes' : 'No'}</td>
-                <td>{question.askedBy}</td>
+                <td>{new Date(question.timestamp.seconds * 1000).toLocaleDateString()}</td>
+                <td>{question.answered ? 'Yes' : 'None'}</td>
+                <td
+                  onMouseEnter={(event) => handleMouseEnter(question.askedByUid, event)}
+                  onMouseLeave={handleMouseLeave}
+                >
+                  {question.askedBy}
+                </td>
                 <td>{question.fileUrl ? <a href={question.fileUrl} target="_blank" rel="noopener noreferrer">View Attachment</a> : "No File"}</td>
+                {getAuth().currentUser && 
+                  <td>{question.reminderSet? 'On' : 'Off'}</td>
+                }
               </tr>
             ))}
           </tbody>
         </table>
+        {showPopup && popupData && (
+          <div className="popup" style={{ top: popupPosition.top, left: popupPosition.left }}>
+            <img src={popupData.profileImage || "https://via.placeholder.com/64x64"} alt="Profile" className="popup-profile-image" />
+            <p>Name: {popupData.name || "Unknown"}</p>
+            <p>Role: {popupData.role || "Unknown"}</p>
+            {popupData.role === "Student" && (
+              <>
+                <p>Course: {popupData.courseOfStudy || "Unknown"}</p>
+                <p>Year: {popupData.yearOfStudy || "Unknown"}</p>
+              </>
+            )}
+            <p>Additional: {popupData.additionalInfo || "Unknown"}</p>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { getAuth, signInWithEmailAndPassword, signInWithPopup, OAuthProvider } from "firebase/auth";
 import './LoginInfo.css';
 import microsoftSignIn from '../assets/images/microsoft-signin.svg';
+import API_URL from '../apiConfig';
 
 const LoginInfo = () => {
   const [email, setEmail] = useState('');
@@ -17,7 +18,7 @@ const LoginInfo = () => {
   };
 
   const checkUserExists = async (email) => {
-    const response = await fetch('http://localhost:5000/check-user', {
+    const response = await fetch(`${API_URL}/check-user`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -124,7 +125,7 @@ const LoginInfo = () => {
         <div className="microsoft-button" onClick={handleMicrosoftLogin}>
           <img src={microsoftSignIn} alt="Sign in with Microsoft" />
         </div>
-        <note>Note: You can freely explore the website without logging in. An account is only required to answer question threads, share files or create polls.</note>
+        <note>Note: You can freely explore the website without logging in. An account is only required to answer question threads or vote on polls.</note>
       </div>
     </div>
   );

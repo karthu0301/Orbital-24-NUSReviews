@@ -89,3 +89,39 @@
 .reply-container .attach-text:hover {
     text-decoration: underline;
 }
+
+.reply p {
+    font-size: 13px;
+}
+
+.reply .text{
+    font-size: 16px;
+}
+
+.reply .popup {
+    position: absolute;
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 10px;
+    box-shadow: 0 0px 10px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    transform: translate(-75%, -60%);
+    border-radius: 6px;
+}
+
+.reply .popup-profile-image {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #F7F7F7;
+    margin-bottom: 2px;
+}
+
+.question-thread-page .reminder-button {
+    margin-top: 10px;
+    background-color: rgb(236, 235, 235);
+    padding: 5px 7px;
+    border-radius: 8px;
+    font-size: 14px;
+}
