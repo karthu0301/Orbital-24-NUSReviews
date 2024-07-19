@@ -1,14 +1,17 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import './Navbar.css';
 import { useState, useEffect } from 'react';
 import { doc, onSnapshot } from '@firebase/firestore';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { db } from '../firebase-config';
 
-const Navbar = () => {
+const Navbar = ({}) => {
     const [user, setUser] = useState(null);
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const auth = getAuth();
+    const navigate = useNavigate();
+    const location = useLocation();
+    const [ShowNotificationDot, setShowNotificationDot] = useState(false);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -25,17 +28,6 @@ const Navbar = () => {
         return () => unsubscribe();
     }, [auth]);
 
-    const toggleDropdown = () => {
-        setDropdownOpen(!dropdownOpen);
-    };
-
-    const handleSignOut = () => {
-        auth.signOut();
-        setDropdownOpen(false);
-    };
-
-    const [ShowNotificationDot, setShowNotificationDot] = useState(false);
-
     useEffect(() => {
         if (user) {
           const userRef = doc(db, 'users', user.uid);
@@ -51,8 +43,20 @@ const Navbar = () => {
       
           return () => unsubscribe(); // Cleanup subscription on component unmount
         }
-      }, [user]);
-      
+    }, [user]);
+
+    const toggleDropdown = () => {
+        setDropdownOpen(!dropdownOpen);
+    };
+
+    const handleSignOut = () => {
+        auth.signOut();
+        setDropdownOpen(false);
+    };
+
+    const handleLoginClick = () => {
+        navigate('/login', { state: { from: location } });
+    };
 
     return (
         <nav className="navbar">
@@ -77,7 +81,7 @@ const Navbar = () => {
                             {ShowNotificationDot && <span className='notification-dot-more'></span>}
                         </div>
                     ) 
-                    : <Link to="/login" className="login-button">Login</Link>
+                    : <button onClick={handleLoginClick} className="login-button">Login</button>
                 }
             </div>
         </nav>

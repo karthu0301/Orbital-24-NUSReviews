@@ -1,4 +1,4 @@
-import FoodQuestionsThread from '../../food/FoodQuestionsThread';
+import QuestionsThread from '../../QuestionsThread';
 
 const FoodQuestionsThreadPage = () => {
   return (
@@ -9,7 +9,7 @@ const FoodQuestionsThreadPage = () => {
       flexDirection: 'column',
       width: '100%',
     }}>
-      <FoodQuestionsThread />
+      <QuestionsThread subCategoryPropQ={'foodQuestions'} subCategoryPropR={'foodReplies'}/>
     </div>
   )
 };

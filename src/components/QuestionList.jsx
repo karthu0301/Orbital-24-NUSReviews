@@ -1,14 +1,14 @@
-import '../QuestionsList.css';
+import './QuestionsList.css';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
-import { db, storage } from '../../firebase-config';
+import { db, storage } from '../firebase-config';
 import { collection, query, where, getDoc, doc, getDocs, addDoc, serverTimestamp } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
-const HousingQuestionsList = () => {
+const QuestionList = ( {subCategoryProp} ) => {
   const [questions, setQuestions] = useState([]);
   const [newQuestion, setNewQuestion] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
@@ -49,7 +49,7 @@ const HousingQuestionsList = () => {
 
   useEffect(() => {
     const fetchQuestions = async () => {
-      let q = collection(db, "housingQuestions");
+      let q = collection(db, subCategoryProp);
 
       if (filterCategory) {
         q = query(q, where("category", "==", filterCategory));
@@ -111,13 +111,13 @@ const HousingQuestionsList = () => {
     let fileUrl = null;
     if (newQuestion.trim() !== '') {
       if (attachedFile) {
-        const fileRef = ref(storage, `replies/${attachedFile.name}`); // Corrected reference creation
-        const uploadTaskSnapshot = await uploadBytes(fileRef, attachedFile); // Corrected upload syntax
-        fileUrl = await getDownloadURL(uploadTaskSnapshot.ref); // Corrected URL retrieval
+        const fileRef = ref(storage, `replies/${attachedFile.name}`);
+        const uploadTaskSnapshot = await uploadBytes(fileRef, attachedFile);
+        fileUrl = await getDownloadURL(uploadTaskSnapshot.ref);
       }
 
       try {
-        const docRef = await addDoc(collection(db, "housingQuestions"), {
+        const docRef = await addDoc(collection(db, subCategoryProp), {
           text: newQuestion,
           category: category,
           anonymous: isAnonymous,
@@ -157,29 +157,65 @@ const HousingQuestionsList = () => {
     setAttachedFile(e.target.files[0]);
   };
 
-  const categories = [
-    { id: 'houses', name: 'Houses' },
-    { id: 'halls', name: 'Halls' },
-    { id: 'studentresidences', name: 'Student Residences' },
-    { id: 'residentialcolleges', name: 'Residential Colleges' },
-    { id: 'application', name: 'Application Matters' },
-    { id: 'pricing', name: 'Pricing' },
-    { id: 'others', name: 'Others' }
-  ];
+  let categories = [];
+  if (subCategoryProp === 'housingQuestions') {
+    categories = [
+        { id: 'houses', name: 'Houses' },
+        { id: 'halls', name: 'Halls' },
+        { id: 'studentresidences', name: 'Student Residences' },
+        { id: 'residentialcolleges', name: 'Residential Colleges' },
+        { id: 'application', name: 'Application Matters' },
+        { id: 'pricing', name: 'Pricing' },
+        { id: 'others', name: 'Others' }
+    ];
+  } else if (subCategoryProp === 'coursesQuestions') {
+    categories = [
+        { id: 'designandengineering', name: 'Design & Engineering' },
+        { id: 'computing', name: 'Computing' },
+        { id: 'humanitiesandsciences', name: 'Humanities & Sciences' },
+        { id: 'medicine', name: 'Medicine' },
+        { id: 'dentistry', name: 'Dentistry' },
+        { id: 'law', name: "Law" },
+        { id: 'music', name: 'Music' },
+        { id: 'nursing', name: 'Nursing' },
+        { id: 'pharmacy', name: 'Pharmacy'},
+        { id: 'nuscollege', name: 'NUS College' },
+        { id: 'application', name: 'Application Matters' },
+        { id: 'others', name: 'Others' }
+    ];
+  }
 
-  const categoryMap = {
-    houses: 'Houses',
-    halls: 'Halls',
-    studentresidences: 'Student Residences',
-    residentialcolleges: 'Residential Colleges',
-    application: 'Application Matters',
-    pricing: 'Pricing',
-    others: 'Others'
-  };
+  let categoryMap = {};
+  if (subCategoryProp === 'housingQuestions') {
+    categoryMap = {
+        houses: 'Houses',
+        halls: 'Halls',
+        studentresidences: 'Student Residences',
+        residentialcolleges: 'Residential Colleges',
+        application: 'Application Matters',
+        pricing: 'Pricing',
+        others: 'Others'
+    };
+  } else if (subCategoryProp === 'coursesQuestions') {
+    categoryMap = {
+        designandengineering: 'Design & Engineering',
+        computing: 'Computing',
+        humanitiesandsciences: 'Humanities & Sciences',
+        medicine: 'Medicine',
+        dentistry: 'Dentistry',
+        law: 'Law',
+        music: 'Music',
+        nursing: 'Nursing',
+        pharmacy: 'Pharmacy',
+        nuscollege: 'NUS College', 
+        application: 'Application Matters',
+        others: 'Others'
+    };
+  }
 
   return (
     <div className="subpage-questions-list">
-      <h2>Housing Question threads</h2>
+      <h2>{subCategoryProp === 'housingQuestions' ? 'Housing' : 'Courses' } Question threads</h2>
       <div className="search-container">
         <FontAwesomeIcon icon={faSearch} />
         <input
@@ -264,7 +300,7 @@ const HousingQuestionsList = () => {
             {questions.map(question => (
               <tr key={question.id}>
                 <td>
-                  <Link to={`/housing/questions/${question.id}`}>
+                  <Link to={`/${subCategoryProp === 'housingQuestions' ? 'housing' : 'courses'}/questions/${question.id}`}>
                     {question.text.length > 100 ? `${question.text.slice(0, 100)}...` : question.text}
                   </Link>
                 </td>
@@ -304,4 +340,4 @@ const HousingQuestionsList = () => {
   );
 };
 
-export default HousingQuestionsList;
+export default QuestionList;

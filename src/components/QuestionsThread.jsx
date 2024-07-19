@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { doc, getDoc, addDoc, collection, getDocs, deleteDoc, where, updateDoc, serverTimestamp, query, orderBy } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { db, storage } from '../../firebase-config';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileAlt } from '@fortawesome/free-solid-svg-icons';
+import './QuestionsThread.css';
+import { doc, getDoc, addDoc, deleteDoc, collection, getDocs, updateDoc, serverTimestamp, query, orderBy, where } from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { db, storage } from '../firebase-config';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
-import '../QuestionsThread.css';
 
-const CoursesQuestionsThread = () => {
+const QuestionsThread = ( {subCategoryPropQ, subCategoryPropR} ) => {
   const { questionId } = useParams();
   const [question, setQuestion] = useState('');
   const [replies, setReplies] = useState([]);
@@ -20,10 +20,10 @@ const CoursesQuestionsThread = () => {
   const [popupData, setPopupData] = useState(null);
   const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
 
-  useEffect(() => {
+  useEffect(() => { 
     const fetchQuestionAndReplies = async () => {
       try {
-        const questionRef = doc(db, 'coursesQuestions', questionId);
+        const questionRef = doc(db, subCategoryPropQ, questionId);
         const questionDoc = await getDoc(questionRef);
         if (questionDoc.exists()) {
           setQuestion(questionDoc.data().text);
@@ -31,8 +31,8 @@ const CoursesQuestionsThread = () => {
         } else {
           console.log("No such document!");
         }
-
-        const repliesRef = collection(db, 'coursesQuestions', questionId, 'coursesReplies');
+    
+        const repliesRef = collection(db, subCategoryPropQ, questionId, subCategoryPropR);
         const repliesQuery = query(repliesRef, orderBy('timestamp'));
         const repliesSnapshot = await getDocs(repliesQuery);
         setReplies(repliesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
@@ -40,7 +40,7 @@ const CoursesQuestionsThread = () => {
         console.error("Error fetching data: ", error);
       }
     };
-
+  
     if (questionId) {
       fetchQuestionAndReplies();
     } else {
@@ -98,16 +98,16 @@ const CoursesQuestionsThread = () => {
     if (newReply.trim() !== '') {
       let fileUrl = null;
       if (attachedFile) {
-        const fileRef = ref(storage, `coursesReplies/${attachedFile.name}`);
+        const fileRef = ref(storage, `${subCategoryPropR}/${attachedFile.name}`);
         await uploadBytes(fileRef, attachedFile);
         fileUrl = await getDownloadURL(fileRef);
       }
-
+  
       try {
         // Check if there are existing replies
-        const repliesRef = collection(db, 'coursesQuestions', questionId, 'coursesReplies');
+        const repliesRef = collection(db, subCategoryPropQ, questionId, subCategoryPropR);
         const repliesSnapshot = await getDocs(repliesRef);
-
+  
         // Add the new reply
         const docRef = await addDoc(repliesRef, {
           text: newReply,
@@ -131,16 +131,33 @@ const CoursesQuestionsThread = () => {
         setNewReply('');
         setAttachedFile(null);
         setIsAnonymous(false);
-
+  
         // If there were no existing replies, update the question to mark it as answered
         if (repliesSnapshot.empty) {
-          const questionRef = doc(db, 'coursesQuestions', questionId);
+          const questionRef = doc(db, subCategoryPropQ , questionId);
           await updateDoc(questionRef, { answered: true });
         }
 
         // Update last reply timestamp
-        await updateDoc(doc(db, "coursesQuestions", questionId), {
+        await updateDoc(doc(db, subCategoryPropQ, questionId), {
           lastReplyTimestamp: serverTimestamp()
+        });
+
+        // Update user contributions
+        const userRefContributions = doc(db, "users", user.uid);
+        const userDocContributions = await getDoc(userRefContributions);
+        let semContributions = 0;
+
+        if (userDocContributions.exists()) {
+          const userDataContributions = userDocContributions.data();
+          semContributions = userDataContributions.contributionsThisSemester;
+        } else {
+          console.error("User document does not exist");
+          return;
+        }
+
+        await updateDoc(userRefContributions, {
+          contributionsThisSemester: semContributions + 1
         });
 
       } catch (error) {
@@ -148,7 +165,7 @@ const CoursesQuestionsThread = () => {
       }
     }
   };
-  
+
   const handleMouseEnter = async (answeredBy, answeredByUid, event) => {
     if (answeredBy !== 'Anonymous' && answeredByUid) {
       try {
@@ -214,7 +231,7 @@ const CoursesQuestionsThread = () => {
         // No reminder set, so add one
         const remindersRef = collection(db, "users", user.uid, "reminders");
         const docRef = await addDoc(remindersRef, {
-          questionCollection: 'coursesQuestions',
+          questionCollection: subCategoryPropQ,
           questionId: questionId,
           timestamp: serverTimestamp()
         });
@@ -238,7 +255,7 @@ const CoursesQuestionsThread = () => {
       alert("Failed to remove reminder.");
     }
   };
-
+  
   return (
     <div className="question-thread-page">
       <div className="question-section">
@@ -258,32 +275,32 @@ const CoursesQuestionsThread = () => {
       <div className="replies-section-h">Replies</div>
       <div className="reply-container">
         {replies.map( reply => (
-            <div key={reply.id} className="reply">
-              <p className='text'>{reply.text}</p>
-              {reply.fileUrl && <a href={reply.fileUrl} target="_blank" rel="noopener noreferrer" className='attach-text'>View Attachment</a>}
-              <p>{new Date(reply.timestamp.seconds * 1000).toLocaleString()}</p>
-              <p
-                onMouseEnter={(event) => handleMouseEnter(reply.answeredBy, reply.answeredByUid, event)}
-                onMouseLeave={handleMouseLeave}
-              >
-                {reply.answeredBy || 'Registered User'}
-              </p>
-              {showPopup && popupData && (
-                <div className="popup" style={{ top: popupPosition.top, left: popupPosition.left }}>
-                  <img src={popupData.profileImage || "https://via.placeholder.com/64x64"} alt="Profile" className="popup-profile-image" />
-                  <p>Name: {popupData.name || "Unknown"}</p>
-                  <p>Role: {popupData.role || "Unknown"}</p>
-                  {popupData.role === "Student" && (
-                    <>
-                      <p>Course: {popupData.courseOfStudy || "Unknown"}</p>
-                      <p>Year: {popupData.yearOfStudy || "Unknown"}</p>
-                    </>
-                  )}
-                  <p>Additional: {popupData.additionalInfo || "Unknown"}</p>
-                </div>
-              )}
-            </div>
-          ))}
+          <div key={reply.id} className="reply">
+            <p className='text'>{reply.text}</p>
+            {reply.fileUrl && <a href={reply.fileUrl} target="_blank" rel="noopener noreferrer" className='attach-text'>View Attachment</a>}
+            <p>{new Date(reply.timestamp.seconds * 1000).toLocaleString()}</p>
+            <p
+              onMouseEnter={(event) => handleMouseEnter(reply.answeredBy, reply.answeredByUid, event)}
+              onMouseLeave={handleMouseLeave}
+            >
+              {reply.answeredBy || 'Registered User'}
+            </p>
+            {showPopup && popupData && (
+              <div className="popup" style={{ top: popupPosition.top, left: popupPosition.left }}>
+                <img src={popupData.profileImage || "https://via.placeholder.com/64x64"} alt="Profile" className="popup-profile-image" />
+                <p>Name: {popupData.name || "Unknown"}</p>
+                <p>Role: {popupData.role || "Unknown"}</p>
+                {popupData.role === "Student" && (
+                  <>
+                    <p>Course: {popupData.courseOfStudy || "Unknown"}</p>
+                    <p>Year: {popupData.yearOfStudy || "Unknown"}</p>
+                  </>
+                )}
+                <p>Additional: {popupData.additionalInfo || "Unknown"}</p>
+              </div>
+            )}
+          </div>
+        ))}
       </div>
       <div className="reply-form">
         <h3>Your Answer</h3>
@@ -310,4 +327,4 @@ const CoursesQuestionsThread = () => {
   );
 };
 
-export default CoursesQuestionsThread;
+export default QuestionsThread;

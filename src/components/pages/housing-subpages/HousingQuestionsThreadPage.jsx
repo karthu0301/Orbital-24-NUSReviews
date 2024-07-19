@@ -1,4 +1,4 @@
-import HousingQuestionsThread from "../../housing/HousingQuestionsThread";
+import QuestionsThread from "../../QuestionsThread";
 
 const HousingQuestionsThreadPage = () => {
   return (
@@ -9,7 +9,7 @@ const HousingQuestionsThreadPage = () => {
       flexDirection: 'column',
       width: '100%',
     }}>
-      <HousingQuestionsThread />
+      <QuestionsThread subCategoryPropQ={'housingQuestions'} subCategoryPropR={'housingReplies'}/>
     </div>
   );
 };

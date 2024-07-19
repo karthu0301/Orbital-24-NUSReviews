@@ -1,17 +1,17 @@
-import CoursesQuestionsThread from "../../courses/CoursesQuestionsThread"
+import QuestionsThread from "../../QuestionsThread";
 
 const CoursesQuestionsThreadPage = () => {
-    return (
-      <div style={{ 
+  return (
+    <div style={{ 
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
         flexDirection: 'column',
         width: '100%',
       }}>
-      <CoursesQuestionsThread />
-      </div>
-    )
-  }
+        <QuestionsThread subCategoryPropQ={'coursesQuestions'} subCategoryPropR={'coursesReplies'}/>
+    </div>
+  )
+}
   
-  export default CoursesQuestionsThreadPage;
+export default CoursesQuestionsThreadPage;

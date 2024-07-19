@@ -1,9 +1,9 @@
-import HousingQuestionsList from "../../housing/HousingQuestionsList"
+import QuestionList from "../../QuestionList";
 
 const HousingQuestionsListPage = () => {
   return (
     <div style={{ display: 'flex', flexDirection: 'row'}}>
-      <HousingQuestionsList />
+      <QuestionList subCategoryProp={'housingQuestions'}/>
     </div>
   )
 };

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { getAuth, signInWithEmailAndPassword, signInWithPopup, OAuthProvider } from "firebase/auth";
 import './LoginInfo.css';
 import microsoftSignIn from '../assets/images/microsoft-signin.svg';
@@ -10,8 +10,11 @@ const LoginInfo = () => {
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
   const auth = getAuth();
   const provider = new OAuthProvider('microsoft.com');
+
+  const { from } = location.state || { from: { pathname: '/' } }; // Default to home if no previous location is found
 
   const isNusEmail = (email) => {
     return email.endsWith('@u.nus.edu');
@@ -48,7 +51,7 @@ const LoginInfo = () => {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       if (userCredential.user.emailVerified) {
         console.log("Logged in successfully:", userCredential.user);
-        navigate('/'); // Navigate to dashboard or home page
+        navigate(from.pathname);
       } else {
         await auth.signOut();
         setErrorMessage("Please verify your email address before logging in.");
@@ -74,7 +77,7 @@ const LoginInfo = () => {
       // Ensure email domain is u.nus.edu
       if (isNusEmail(email)) {
         console.log("Logged in with Microsoft Successfully:", result.user);
-        navigate('/');
+        navigate(from.pathname);
       } else {
         setErrorMessage('Only valid NUS emails are allowed.');
         await auth.signOut();

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { collection, getDocs, updateDoc, doc, getDoc, arrayUnion, onSnapshot } from 'firebase/firestore';
+import { collection, updateDoc, doc, getDoc, arrayUnion, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase-config';
 import { getAuth } from 'firebase/auth';
 import './PollList.css';
@@ -26,26 +26,6 @@ const PollList = ({ filterCategory }) => {
         // Cleanup subscription on unmount
         return () => unsubscribe();
     }, []);
-
-    // useEffect(() => {
-    //     const fetchPolls = async () => {
-    //         const querySnapshot = await getDocs(collection(db, "polls"));
-    //         const pollsData = querySnapshot.docs.map(doc => {
-    //             const options = doc.data().options;
-    //             const totalVotes = options.reduce((total, option) => total + option.votes, 0);
-    //             return {
-    //                 id: doc.id,
-    //                 ...doc.data(),
-    //                 options,
-    //                 totalVotes
-    //             };
-    //         });
-
-    //         setPolls(pollsData);
-    //     };
-
-    //     fetchPolls();
-    // }, []);
 
     const handleVote = async (pollId, optionIndex) => {
         const auth = getAuth();
@@ -115,8 +95,8 @@ const PollList = ({ filterCategory }) => {
                             {poll.options.map((option, index) => (
                                 <li key={index}>
                                     <div>{option.option}: {option.votes} votes</div>
-                                    <div className="vote-bar" style={{ width: `${poll.totalVotes ? (option.votes / poll.totalVotes * 100) : 0}%`, backgroundColor: 'lightgreen', height: '20px', marginBottom: '10px' }}></div>
                                     <button className='vote-button'onClick={() => handleVote(poll.id, index)}>Vote</button>
+                                    <div className="vote-bar" style={{ width: `${poll.totalVotes ? (option.votes / poll.totalVotes * 100) : 0}%`, backgroundColor: 'lightgreen', height: '20px', marginBottom: '10px' }}></div>
                                 </li>
                             ))}
                         </ul>

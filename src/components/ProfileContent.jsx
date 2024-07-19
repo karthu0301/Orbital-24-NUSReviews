@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import './ProfileContent.css';
 import { getAuth, updateProfile } from 'firebase/auth';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, updateDoc, onSnapshot } from 'firebase/firestore';
 import { db, storage } from '../firebase-config';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
@@ -30,23 +30,46 @@ const ProfileContent = () => {
       const user = auth.currentUser;
       if (user) {
         setUser(user);
-        setProfileData((prevData) => ({
-          ...prevData,
-          displayName: user.displayName, //Prefill displayName
-          email: user.email // Prefill email field
-        }));
         const docRef = doc(db, 'users', user.uid);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          setProfileData((prevData) => ({
-            ...prevData,
-            ...docSnap.data()
-          }));
-        }
+        const unsubscribe = onSnapshot(docRef, async (docSnap) => {
+          if (docSnap.exists()) {
+            const userData = docSnap.data();
+            setProfileData((prevData) => ({
+              ...prevData,
+              ...userData,
+              displayName: user.displayName, // Prefill displayName
+              email: user.email // Prefill email field
+            }));
+  
+            // Check and update eligibility for bonus points
+            const eligibilityForBonus = await checkBiddingPoints(userData);
+            if (userData.eligibilityForBonus !== eligibilityForBonus) {
+              // Update only if there is a change to reduce unnecessary writes
+              await updateDoc(docRef, { eligibilityForBonus: eligibilityForBonus });
+            }
+          } else {
+            console.error("User document does not exist");
+          }
+        });
+  
+        return () => unsubscribe(); // Cleanup subscription on component unmount
       }
     };
     fetchData();
-  }, [auth]);
+  }, [auth]); // Dependency on auth to re-run when auth state changes
+  
+
+  const checkBiddingPoints = async (userData) => {
+    let earned = 'No';
+    const semContributions = userData.contributionsThisSemester;
+    const semFlags = userData.flaggedContributions;
+  
+    if (semContributions >= 7 && semFlags < 5) {
+      earned = 'Yes';
+    }
+  
+    return earned;
+  };  
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
