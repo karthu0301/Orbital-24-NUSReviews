@@ -1,0 +1,132 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Libre Franklin', sans-serif;
+}
+
+.profile-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 80%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.profile-content {
+  flex: 1;
+  max-width: 800px;
+  margin-right: 20px;
+}
+
+.profile-hold .sidebar {
+  width: 18%;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.profile-image {
+  width: 128px;
+  height: 128px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #F7F7F7;
+}
+
+.edit-profile {
+  margin-left: 20px;
+}
+
+.edit-profile-text {
+  color: #0D99FF;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.profile-stats {
+  margin-top: 10px;
+}
+
+.profile-stats div {
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+.profile-info {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.profile-info-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.profile-info-label {
+  width: 200px;
+  font-size: 14px;
+  font-weight: 500;
+  color: black;
+}
+
+.profile-info-value {
+  font-size: 14px;
+  font-weight: 400;
+  color: black;
+  border: none;
+  background: none;
+  width: 300px;
+}
+
+.profile-info-value select {
+  width: 100%;
+  font-size: 14px;
+  color: black;
+  background: none;
+  border: none;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.profile-info .error {
+  color: rgb(179, 3, 3);
+}
+
+.save-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #0D99FF;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  font-family: 'Libre Franklin', sans-serif;
+  cursor: pointer;
+  align-self: flex-end;
+}
+
+.save-button:hover {
+  background-color: #0073e6;
+}
+
+.profile-content note {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #003882;
+  font-weight: 600;
+}
+
+.profile-content newnote {
+  margin-top: 10px;
+  font-size: 12px;
+  color: rgb(179, 3, 3);
+  font-weight: 600;
+}

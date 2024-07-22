@@ -1,0 +1,8 @@
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Allow read and write access to all files for any user
+    match /{allPaths=**} {
+      allow read, write: if true;
+    }
+  }
+}

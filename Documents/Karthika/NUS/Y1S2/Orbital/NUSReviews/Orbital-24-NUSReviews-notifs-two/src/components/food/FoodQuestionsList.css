@@ -1,0 +1,107 @@
+body {
+    overflow-x: hidden; /* Prevent horizontal overflow */
+}
+
+.food-questions-list {
+    padding: 20px;
+    margin-top: -40px;
+    margin-left: 10px;
+    margin-bottom: 40px;
+}
+
+.subpage-questions-list h2 {
+    font-weight: bold;
+    font-size: 40px;
+    margin-bottom: 30px;
+    color: black;
+    margin-left:20px;
+}
+  
+.search-container {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ccc;
+    padding: 5px 10px;
+    margin-bottom: 20px;
+    margin-left: 20px;
+    height: 12vh;
+    min-width: 56%;
+    max-width: 6vw;
+    font-size: 1.1vw;
+}
+  
+.search-container input {
+    border: none;
+    outline: none;
+    margin-left: 10px;
+    flex-grow: 1;
+    background-color: #f0f0f0; 
+    height:100%;
+}
+
+.filter-select {
+    margin-left: 10px;
+    padding: 5px;
+}
+
+.form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 50px;
+    width: 100vw;
+}
+
+.form-container input[type="text"],
+.form-container input[type="file"] {
+    border: 1px solid #ccc; 
+    padding: 8px; 
+    gap: 10px;
+    width: 75vw;
+}
+
+.form-container input[type="text"] {
+    height: 100px;
+    align-items: center;
+    background-color: #e7f0fa; 
+    border-color: #0056b3;
+}
+
+.form-container input[type="text"]::placeholder {
+    color: rgb(86, 86, 86);
+}
+
+.form-container input[type="file"] {
+    margin-top: 10px; 
+    background-color: white;
+}
+    
+.form-container button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    align-items: center;
+    margin-left: 30px;
+    height: 90px;
+}
+  
+.form-container button:hover {
+    background-color: #0056b3;
+}
+
+.category-select {
+    padding: 8px;
+    margin-right: 10px;
+    border: 1px solid #ccc;
+    width: 75vw;
+}
+
+.questions-list table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed; /* Ensures equal spacing */
+}

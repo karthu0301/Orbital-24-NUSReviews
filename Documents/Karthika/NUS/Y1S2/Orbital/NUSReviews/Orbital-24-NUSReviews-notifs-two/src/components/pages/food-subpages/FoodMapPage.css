@@ -1,0 +1,16 @@
+.map-container {
+  width: 100%;
+  height: 90%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.map-title {
+  text-align: center;
+  font-family: 'Libre Franklin', sans-serif;
+  font-weight: 600;
+  font-size: 150%;
+  margin-bottom: 20px ;
+}
