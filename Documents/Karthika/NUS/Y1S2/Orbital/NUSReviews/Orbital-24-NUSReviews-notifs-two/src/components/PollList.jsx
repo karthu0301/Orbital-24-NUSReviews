@@ -2,11 +2,16 @@ import { useEffect, useState } from 'react';
 import { collection, getDocs, updateDoc, doc, getDoc, arrayUnion, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase-config';
 import { getAuth } from 'firebase/auth';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFlag  } from '@fortawesome/free-solid-svg-icons';
 import './PollList.css';
 
 const PollList = ({ filterCategory }) => {
     const [polls, setPolls] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState('all');
+    const [flagModalOpen, setFlagModalOpen] = useState(false);
+    const [flagReason, setFlagReason] = useState('');
+    const [currentPollId, setCurrentPollId] = useState(null);
 
     useEffect(() => {
         const unsubscribe = onSnapshot(collection(db, "polls"), (snapshot) => {
@@ -91,25 +96,58 @@ const PollList = ({ filterCategory }) => {
         }
     };
 
+    const handleOpenFlagModal = (pollId) => {
+        setCurrentPollId(pollId);
+        setFlagModalOpen(true);
+    };
+
+    const handleCloseFlagModal = () => {
+        setFlagModalOpen(false);
+        setFlagReason('');
+    };
+
+    const handleFlagSubmit = async () => {
+        if (!flagReason.trim()) {
+            alert("Please enter a reason for flagging.");
+            return;
+        }
+        try {
+            const pollRef = doc(db, "polls", currentPollId);
+            // Here you would add the logic to add the flag to the database
+            console.log("Flag submitted for poll", currentPollId, "with reason:", flagReason);
+            setFlagReason('');
+            setFlagModalOpen(false);
+        } catch (error) {
+            console.error("Error flagging poll:", error);
+            alert("Failed to flag poll.");
+        }
+    };
+
     return (
         <div className="polls-container">
-            {!filterCategory && (
-                <div className="category-buttons">
-                {['all', 'courses', 'housing', 'food', 'others'].map(category => (
-                    <button key={category} onClick={() => setSelectedCategory(category)} className={selectedCategory === category ? "selected" : ""}>
-                        {category.charAt(0).toUpperCase() + category.slice(1)}
-                    </button>
-                ))}
-            </div>
-            )}
-            {filterCategory && (
-                <div className="poll-topic">
-                        {filterCategory.charAt(0).toUpperCase() + filterCategory.slice(1)}
+            {flagModalOpen && (
+                <div className="backdrop">
+                    <div className="modal">
+                        <h3>Flag Poll</h3>
+                        <textarea
+                            className="flag-textarea"
+                            value={flagReason}
+                            onChange={(e) => setFlagReason(e.target.value)}
+                            placeholder="Enter reason for flagging this poll..."
+                        />
+                        <div className="modal-buttons">
+                            <button onClick={handleFlagSubmit} className="submit-button">Submit Flag</button>
+                            <button onClick={handleCloseFlagModal} className="cancel-button">Cancel</button>
+                        </div>
+                    </div>
                 </div>
             )}
             <div className="polls-grid">
                 {polls.filter(poll => filterCategory ? poll.category === filterCategory : selectedCategory === 'all' || poll.category === selectedCategory).map(poll => (
                     <div key={poll.id} className="poll-container">
+                        <button className="flag-poll-button" onClick={() => handleOpenFlagModal(poll.id)}>
+                            <FontAwesomeIcon icon={faFlag} />
+                        </button>
                         <h3>{poll.title} - {poll.category ? poll.category.charAt(0).toUpperCase() + poll.category.slice(1) : 'Unknown'}</h3>
                         <ul>
                             {poll.options.map((option, index) => (

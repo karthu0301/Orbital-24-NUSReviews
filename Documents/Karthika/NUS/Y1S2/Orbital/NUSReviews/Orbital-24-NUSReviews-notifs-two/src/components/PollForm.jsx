@@ -3,7 +3,7 @@ import { db } from '../firebase-config';
 import { collection, addDoc } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faMinus, faFlag  } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faMinus} from '@fortawesome/free-solid-svg-icons';
 import './PollForm.css'; // Assuming CSS is in this file
 
 const PollForm = ({ fixedCategory }) => {
@@ -111,28 +111,7 @@ const PollForm = ({ fixedCategory }) => {
         <div className="poll-form-container">
             <div className="poll-form-header">
                 Create Your Poll
-                <button onClick={handleOpenFlagModal} className="flag-poll-button">
-                    <FontAwesomeIcon icon={faFlag} />
-                </button>
             </div>
-            {showFlagModal && (
-                <div className="backdrop">
-                    <div className="modal">
-                        <h3>Flag Poll</h3>
-                        <textarea
-                            className="flag-textarea"
-                            value={flagReason}
-                            onChange={(e) => setFlagReason(e.target.value)}
-                            placeholder="Enter reason for flagging this poll..."
-                        />
-                        <div className="modal-buttons">
-                            <button onClick={handleFlagSubmit} className="submit-button">Submit Flag</button>
-                            <button onClick={handleCloseFlagModal} className="cancel-button">Cancel</button>
-                        </div>
-                    </div>
-                </div>
-            )}
-
             <form onSubmit={handleSubmit}>
                 <input className="poll-input" type="text" value={title} onChange={e => setTitle(e.target.value)} placeholder="Poll Title" required />
                 {errors.title && <div className="error">{errors.title}</div>}
