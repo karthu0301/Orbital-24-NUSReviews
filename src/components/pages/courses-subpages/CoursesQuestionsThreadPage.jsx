@@ -9,7 +9,7 @@ const CoursesQuestionsThreadPage = () => {
         flexDirection: 'column',
         width: '100%',
       }}>
-        <QuestionsThread subCategoryPropQ={'coursesQuestions'} subCategoryPropR={'coursesReplies'}/>
+        <QuestionsThread subCategoryPropQ={'coursesQuestions'} subCategoryPropR={'coursesReplies'} subtopic={'courses'}/>
     </div>
   )
 }

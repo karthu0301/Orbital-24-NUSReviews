@@ -1,10 +1,4 @@
-import { 
-  Route,
-  createBrowserRouter,
-  createRoutesFromElements,
-  RouterProvider
-} from 'react-router-dom'
-
+import { Route, createBrowserRouter, createRoutesFromElements, RouterProvider } from 'react-router-dom'
 import './firebase-config';
 import MainLayout from './layouts/MainLayout';
 import AltLayout from './layouts/AltLayout';
@@ -32,6 +26,10 @@ import FoodMapPage from './components/pages/food-subpages/FoodMapPage';
 import FoodPollPage from './components/pages/food-subpages/FoodPollPage';
 import FoodQuestionsListPage from './components/pages/food-subpages/FoodQuestionsListPage';
 import FoodQuestionsThreadPage from './components/pages/food-subpages/FoodQuestionsThreadPage';
+import { getAuth, onAuthStateChanged } from '@firebase/auth';
+import { useEffect, useState } from 'react';
+import { getDoc, doc, collection, getDocs, updateDoc } from 'firebase/firestore';
+import { db } from './firebase-config';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -79,6 +77,58 @@ const router = createBrowserRouter(
 );
 
 const App = () => {
+  const [user, setUser] = useState(null);
+  const [userLastViewed, setUserLastViewed] = useState({});
+
+  useEffect(() => {
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, currentUser => {
+      setUser(currentUser);
+      if (currentUser) {
+        const userRef = doc(db, "users", currentUser.uid);
+        getDoc(userRef).then(docSnapshot => {
+          if (docSnapshot.exists()) {
+            const userData = docSnapshot.data();
+            setUserLastViewed(userData.lastViewedThreads || {});
+          }
+        }).catch(error => console.error("Failed to fetch user data:", error));
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    const refreshReminders = async () => {
+      if (!user) return;
+
+      let hasUnread = false;
+      const remindersRef = collection(db, "users", user.uid, "reminders");
+      const reminderDocs = await getDocs(remindersRef);
+      await Promise.all(reminderDocs.docs.map(async (reminderDoc) => {
+        const reminderData = reminderDoc.data();
+        const questionRef = doc(db, reminderData.questionCollection, reminderData.questionId);
+        const questionDoc = await getDoc(questionRef);
+        if (questionDoc.exists()) {
+          const questionData = questionDoc.data();
+          const questionId = questionDoc.id;
+          const lastViewedTimestamp = userLastViewed[questionId]?.seconds || 0;
+          const lastReplyTimestamp = questionData.lastReplyTimestamp?.seconds || 0;
+          if (lastReplyTimestamp > lastViewedTimestamp) {
+            hasUnread = true;
+          }
+        }
+      }));
+      const userRef = doc(db, "users", user.uid);
+      await updateDoc(userRef, {
+        hasUnreadNotifications: hasUnread
+      });
+    };
+
+    if (user) {
+      refreshReminders().catch(error => console.error("Failed to refresh reminders:", error));
+    }
+  }, [user, userLastViewed]);
+
   return <RouterProvider router={router} />;
 };
 

@@ -32,5 +32,27 @@ app.post("/check-user", async (req, res) => {
   }
 });
 
+// Firestore-triggered function to disable user accounts
+exports.disableAccountOnFlags = functions.firestore
+    .document("users/{userId}")
+    .onUpdate(async (change, context) => {
+      const newData = change.after.data();
+      const previousData = change.before.data();
+
+      if (newData.flaggedContributions >= 10 &&
+        previousData.flaggedContributions < 10) {
+        try {
+          await admin.auth().updateUser(context.params.userId, {
+            disabled: true,
+          });
+          console.log(`Disabled account for user ${context.params.userId}
+             due to excessive flags.`);
+        } catch (error) {
+          console.error(`Error disabling account for user
+             ${context.params.userId}:`, error);
+        }
+      }
+    });
+
 // Export the Express app as a Firebase Function
 exports.api = functions.https.onRequest(app);

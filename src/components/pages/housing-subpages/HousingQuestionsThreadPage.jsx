@@ -9,7 +9,7 @@ const HousingQuestionsThreadPage = () => {
       flexDirection: 'column',
       width: '100%',
     }}>
-      <QuestionsThread subCategoryPropQ={'housingQuestions'} subCategoryPropR={'housingReplies'}/>
+      <QuestionsThread subCategoryPropQ={'housingQuestions'} subCategoryPropR={'housingReplies'} subtopic={'housing'}/>
     </div>
   );
 };

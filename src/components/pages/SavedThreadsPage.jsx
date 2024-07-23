@@ -73,60 +73,60 @@ const SavedThreadsPage = () => {
     return () => unsubscribe();
   }, []);
 
-useEffect(() => {
-  const fetchQuestions = async () => {
-    if (!user) return;
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      if (!user) return;
 
-    let hasUnread = false; // Initialize the flag for each fetch cycle
-    console.log("Started fetching questions...");
+      let hasUnread = false; // Initialize the flag for each fetch cycle
+      console.log("Started fetching questions...");
 
-    const remindersRef = collection(db, "users", user.uid, "reminders");
-    const reminderDocs = await getDocs(remindersRef);
+      const remindersRef = collection(db, "users", user.uid, "reminders");
+      const reminderDocs = await getDocs(remindersRef);
 
-    const questionsPromises = reminderDocs.docs.map(async (reminderDoc) => {
-      const reminderData = reminderDoc.data();
-      const questionRef = firestoreDoc(db, reminderData.questionCollection, reminderData.questionId);
-      const questionDoc = await getDoc(questionRef);
-    
-      if (questionDoc.exists()) {
-        const questionData = questionDoc.data();
-        const questionId = questionDoc.id;
-        const lastViewedTimestamp = userLastViewed[questionId] ? userLastViewed[questionId].seconds : 0;
-        const lastReplyTimestamp = questionData.lastReplyTimestamp ? questionData.lastReplyTimestamp.seconds : 0;
-    
-        if (lastReplyTimestamp > lastViewedTimestamp) {
-          hasUnread = true;
+      const questionsPromises = reminderDocs.docs.map(async (reminderDoc) => {
+        const reminderData = reminderDoc.data();
+        const questionRef = firestoreDoc(db, reminderData.questionCollection, reminderData.questionId);
+        const questionDoc = await getDoc(questionRef);
+      
+        if (questionDoc.exists()) {
+          const questionData = questionDoc.data();
+          const questionId = questionDoc.id;
+          const lastViewedTimestamp = userLastViewed[questionId] ? userLastViewed[questionId].seconds : 0;
+          const lastReplyTimestamp = questionData.lastReplyTimestamp ? questionData.lastReplyTimestamp.seconds : 0;
+      
+          if (lastReplyTimestamp > lastViewedTimestamp) {
+            hasUnread = true;
+          }
+      
+          return {
+            ...questionData,
+            id: questionId,
+            collection: reminderData.questionCollection,
+            topic: categoryMap[reminderData.questionCollection],
+            pageRoute: categoryMapRoute[reminderData.questionCollection],
+            reminderId: reminderDoc.id,
+            reminderTimestamp: reminderData.timestamp.seconds
+          };
         }
-    
-        return {
-          ...questionData,
-          id: questionId,
-          collection: reminderData.questionCollection,
-          topic: categoryMap[reminderData.questionCollection],
-          pageRoute: categoryMapRoute[reminderData.questionCollection],
-          reminderId: reminderDoc.id,
-          reminderTimestamp: reminderData.timestamp.seconds
-        };
-      }
-      return null;
-    });    
+        return null;
+      });    
 
-    const fetchedQuestions = await Promise.all(questionsPromises);
-    setQuestions(fetchedQuestions.filter(q => q !== null));
+      const fetchedQuestions = await Promise.all(questionsPromises);
+      setQuestions(fetchedQuestions.filter(q => q !== null));
 
-    console.log("hasUnread final value:", hasUnread);
+      console.log("hasUnread final value:", hasUnread);
 
-    // Ensure all promises complete before updating the user document
-    const userRef = firestoreDoc(db, "users", user.uid);
-    await updateDoc(userRef, {
-      hasUnreadNotifications: hasUnread
-    });
-  };
+      // Ensure all promises complete before updating the user document
+      const userRef = firestoreDoc(db, "users", user.uid);
+      await updateDoc(userRef, {
+        hasUnreadNotifications: hasUnread
+      });
+    };
 
-  if (isAuthReady && user) {
-      fetchQuestions();
-  }
-}, [isAuthReady, user, userLastViewed]); // Make sure to correctly list all dependencies
+    if (isAuthReady && user) {
+        fetchQuestions();
+    }
+  }, [isAuthReady, user, userLastViewed]); // Make sure to correctly list all dependencies
 
 
   const checkForNewReplies = (question, lastViewed) => {

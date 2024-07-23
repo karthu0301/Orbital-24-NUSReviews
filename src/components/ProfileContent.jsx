@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import './ProfileContent.css';
-import { getAuth, updateProfile } from 'firebase/auth';
-import { doc, getDoc, setDoc, updateDoc, onSnapshot } from 'firebase/firestore';
+import { getAuth, updateProfile, onAuthStateChanged } from 'firebase/auth';
+import { doc, setDoc, updateDoc, onSnapshot } from 'firebase/firestore';
 import { db, storage } from '../firebase-config';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
@@ -26,38 +26,37 @@ const ProfileContent = () => {
   const auth = getAuth();
 
   useEffect(() => {
-    const fetchData = async () => {
-      const user = auth.currentUser;
-      if (user) {
-        setUser(user);
-        const docRef = doc(db, 'users', user.uid);
-        const unsubscribe = onSnapshot(docRef, async (docSnap) => {
-          if (docSnap.exists()) {
-            const userData = docSnap.data();
-            setProfileData((prevData) => ({
-              ...prevData,
-              ...userData,
-              displayName: user.displayName, // Prefill displayName
-              email: user.email // Prefill email field
-            }));
-  
-            // Check and update eligibility for bonus points
-            const eligibilityForBonus = await checkBiddingPoints(userData);
-            if (userData.eligibilityForBonus !== eligibilityForBonus) {
-              // Update only if there is a change to reduce unnecessary writes
-              await updateDoc(docRef, { eligibilityForBonus: eligibilityForBonus });
-            }
-          } else {
-            console.error("User document does not exist");
-          }
-        });
-  
-        return () => unsubscribe(); // Cleanup subscription on component unmount
-      }
-    };
-    fetchData();
-  }, [auth]); // Dependency on auth to re-run when auth state changes
-  
+    const unsubscribeAuth = onAuthStateChanged(auth, async (currentUser) => {
+        setUser(currentUser);
+        if (currentUser) {
+            const docRef = doc(db, 'users', currentUser.uid);
+            const unsubscribe = onSnapshot(docRef, async (docSnap) => {
+                if (docSnap.exists()) {
+                    const userData = docSnap.data();
+                    setProfileData(prevData => ({
+                        ...prevData,
+                        ...userData,
+                        displayName: currentUser.displayName, // Prefill displayName
+                        email: currentUser.email // Prefill email field
+                    }));
+
+                    // Check and update eligibility for bonus points
+                    const eligibilityForBonus = await checkBiddingPoints(userData);
+                    if (userData.eligibilityForBonus !== eligibilityForBonus) {
+                        // Update only if there is a change to reduce unnecessary writes
+                        await updateDoc(docRef, { eligibilityForBonus: eligibilityForBonus });
+                    }
+                } else {
+                    console.error("User document does not exist");
+                }
+            });
+
+            return () => unsubscribe(); // Cleanup subscription on component unmount
+        }
+    });
+    return unsubscribeAuth; // Cleanup auth state listener on component unmount
+  }, [auth]);
+
 
   const checkBiddingPoints = async (userData) => {
     let earned = 'No';
@@ -217,9 +216,9 @@ const ProfileContent = () => {
           <button className="save-button" onClick={handleSave}>Save</button>
         </div>
         <div> 
-          <note>Note: Completing your profile is optional, but it helps other users learn more about your credibility and background.</note>
+          <p>Note: Completing your profile is optional, but it helps other users learn more about your credibility and background.</p>
         </div>
-        <newnote>* A Display Name is required, it will be shown when you make contributions that are not anonymous.</newnote>
+        <span>* A Display Name is required, it will be shown when you make contributions that are not anonymous.</span>
       </div>
     </div>
   );

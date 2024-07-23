@@ -9,7 +9,7 @@ const FoodQuestionsThreadPage = () => {
       flexDirection: 'column',
       width: '100%',
     }}>
-      <QuestionsThread subCategoryPropQ={'foodQuestions'} subCategoryPropR={'foodReplies'}/>
+      <QuestionsThread subCategoryPropQ={'foodQuestions'} subCategoryPropR={'foodReplies'} subtopic={'food'}/>
     </div>
   )
 };

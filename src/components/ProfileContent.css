@@ -117,14 +117,14 @@ body {
   background-color: #0073e6;
 }
 
-.profile-content note {
+.profile-content p {
   margin-top: 10px;
   font-size: 12px;
   color: #003882;
   font-weight: 600;
 }
 
-.profile-content newnote {
+.profile-content span {
   margin-top: 10px;
   font-size: 12px;
   color: rgb(179, 3, 3);

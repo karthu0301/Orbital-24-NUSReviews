@@ -61,7 +61,7 @@ const LoginInfo = () => {
       if (error.code === 'auth/invalid-credential') {
         setErrorMessage('Incorrect password. Please try again.');
       } else if (error.code === 'auth/user-disabled') {
-        setErrorMessage('This account has been disabled.');
+        setErrorMessage('This account has been disabled. Contact Administrators to reinstate.');
       } else {
         setErrorMessage(error.message); // Use the original Firebase error message
       }
