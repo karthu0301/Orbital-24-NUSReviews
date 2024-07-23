@@ -8,7 +8,7 @@ import { collection, query, where, getDoc, doc, getDocs, addDoc, serverTimestamp
 import { getAuth } from 'firebase/auth';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
-const QuestionList = ( {subCategoryProp} ) => {
+const QuestionList = ({ subCategoryProp }) => {
   const [questions, setQuestions] = useState([]);
   const [newQuestion, setNewQuestion] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
@@ -127,7 +127,8 @@ const QuestionList = ( {subCategoryProp} ) => {
           askedBy: asker,
           askedByUid: askerUid,
           reminderSet: false,
-          lastReplyTimestamp: serverTimestamp()  
+          lastReplyTimestamp: serverTimestamp(),
+          flagged: false
         });
         const newQuestionObj = {
           id: docRef.id,
@@ -139,7 +140,8 @@ const QuestionList = ( {subCategoryProp} ) => {
           askedByUid: askerUid,
           fileUrl: fileUrl,
           reminderSet: false,
-          lastReplyTimestamp: serverTimestamp() 
+          lastReplyTimestamp: serverTimestamp(),
+          flagged: false
         };
         
         setQuestions(prevQuestions => [newQuestionObj, ...prevQuestions]);
@@ -301,7 +303,7 @@ const QuestionList = ( {subCategoryProp} ) => {
               <tr key={question.id}>
                 <td>
                   <Link to={`/${subCategoryProp === 'housingQuestions' ? 'housing' : 'courses'}/questions/${question.id}`}>
-                    {question.text.length > 100 ? `${question.text.slice(0, 100)}...` : question.text}
+                    {question.flagged ? <span className="flagged-question">Flagged Question</span> : (question.text.length > 100 ? `${question.text.slice(0, 100)}...` : question.text)}
                   </Link>
                 </td>
                 <td>{categoryMap[question.category]}</td>

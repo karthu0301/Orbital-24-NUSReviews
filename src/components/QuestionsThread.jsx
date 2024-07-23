@@ -26,6 +26,7 @@ const QuestionsThread = ({ subCategoryPropQ, subCategoryPropR, subtopic }) => {
   const [flaggingReplyId, setFlaggingReplyId] = useState(null);
   const [flagModalPosition, setFlagModalPosition] = useState({ top: 0, left: 0 });
   const [showFlagSuccess, setShowFlagSuccess] = useState(false);
+  const [isFlaggingQuestion, setIsFlaggingQuestion] = useState(false);
 
   const filter = new Filter();
 
@@ -89,8 +90,8 @@ const QuestionsThread = ({ subCategoryPropQ, subCategoryPropR, subtopic }) => {
   const handleReplySubmit = async (e) => {
     e.preventDefault();
 
-    const auth = getAuth(); 
-    const user = auth.currentUser; 
+    const auth = getAuth();
+    const user = auth.currentUser;
     let answerer = null;
     let answerUid = null;
 
@@ -130,10 +131,10 @@ const QuestionsThread = ({ subCategoryPropQ, subCategoryPropR, subtopic }) => {
         if (filter.isProfane(newReply)) {
           newReplyData.flagged = true;
           const flagDocRef = await addDoc(collection(db, 'flags'), {
-            responseId: '', 
+            responseId: '',
             reason: 'Auto-flagged for offensive content',
             timestamp: serverTimestamp(),
-            subtopic: subtopic, 
+            subtopic: subtopic,
             questionId: questionId
           });
 
@@ -209,7 +210,7 @@ const QuestionsThread = ({ subCategoryPropQ, subCategoryPropR, subtopic }) => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
     });
-    return unsubscribe; 
+    return unsubscribe;
   }, []);
 
   const [reminderId, setReminderId] = useState(null);
@@ -301,215 +302,222 @@ const QuestionsThread = ({ subCategoryPropQ, subCategoryPropR, subtopic }) => {
     }
   };
 
-  const handleFlagQuestion = async () => {
-    if (!questionId) return;
-  
-    try {
-      const flagDocRef = await addDoc(collection(db, 'flags'), {
-        questionId: questionId,
-        reason: "Inappropriate content",
-        timestamp: serverTimestamp(),
-        subtopic: subtopic
-      });
-  
-      // Update the question to mark it as flagged
-      const questionRef = doc(db, subCategoryPropQ, questionId);
-      await updateDoc(questionRef, {
-        flagged: true
-      });
-  
-      setQuestionData(prev => ({ ...prev, flagged: true }));
-      setShowFlagSuccess(true);
-  
-      setTimeout(() => {
-        setShowFlagSuccess(false);
-      }, 3000);
-    } catch (error) {
-      console.error("Failed to flag question:", error);
-    }
+  const handleFlagQuestionClick = (event) => {
+    console.log("Flag button clicked for the question");
+    const rect = event.target.getBoundingClientRect();
+    setIsFlaggingQuestion(true);
+    setShowFlagModal(true);
+    setFlagModalPosition({ top: rect.top, left: rect.left });
   };
-  
 
   const handleFlagReply = (replyId, event) => {
     console.log("Flag button clicked for reply ID:", replyId);
     const rect = event.target.getBoundingClientRect();
     const parentRect = event.target.closest('.reply').getBoundingClientRect();
     setFlaggingReplyId(replyId);
+    setIsFlaggingQuestion(false);
     setShowFlagModal(true);
     setFlagModalPosition({ top: rect.top - parentRect.top, left: rect.left - parentRect.left });
   };
 
   const incrementFlaggedContributions = async (userId) => {
-  if (!userId) {
-    console.error("User ID is undefined, cannot increment flagged contributions.");
-    return;
-  }
-  try {
-    const userRef = doc(db, 'users', userId);
-    await updateDoc(userRef, {
-      flaggedContributions: increment(1)
-    });
-  } catch (error) {
-    console.error("Failed to increment flagged contributions:", error);
-  }
-};
-
-const handleFlagSubmit = async (e) => {
-  e.preventDefault();
-  if (flagReason.trim() !== '') {
-    try {
-      const flagsRef = collection(db, 'flags');
-      const flagDocRef = await addDoc(flagsRef, {
-        responseId: flaggingReplyId,
-        reason: flagReason,
-        timestamp: serverTimestamp(),
-        subtopic: subtopic,
-        questionId: questionId
-      });
-
-      // Update the reply to mark it as flagged
-      const replyRef = doc(db, subCategoryPropQ, questionId, subCategoryPropR, flaggingReplyId);
-      await updateDoc(replyRef, {
-        flagged: true
-      });
-
-      // Assuming you fetch and set replies somewhere else after this update, otherwise, you need to update local state here
-      console.log("Reply flagged successfully.");
-      setFlagReason('');
-      setShowFlagModal(false);
-      setShowFlagSuccess(true);
-
-      setTimeout(() => {
-        setShowFlagSuccess(false);
-      }, 3000);
-    } catch (error) {
-      console.error("Failed to flag reply:", error);
+    if (!userId) {
+      console.error("User ID is undefined, cannot increment flagged contributions.");
+      return;
     }
-  }
-};
+    try {
+      const userRef = doc(db, 'users', userId);
+      await updateDoc(userRef, {
+        flaggedContributions: increment(1)
+      });
+    } catch (error) {
+      console.error("Failed to increment flagged contributions:", error);
+    }
+  };
 
+  const handleFlagSubmit = async (e) => {
+    e.preventDefault();
+    if (flagReason.trim() !== '') {
+      try {
+        if (isFlaggingQuestion) {
+          const questionRef = doc(db, subCategoryPropQ, questionId);
+          const questionDoc = await getDoc(questionRef);
+          const askedByUid = questionDoc.data().askedByUid;
 
+          const flagDocRef = await addDoc(collection(db, 'flags'), {
+            questionId: questionId,
+            reason: flagReason,
+            timestamp: serverTimestamp(),
+            subtopic: subtopic
+          });
 
-return (
-  <div className="question-thread-page">
-    <div className="question-section">
-      <h2>Question</h2>
-      <p>{questionData.text}</p>
-      {questionData.flagged ? (
-    <p>This question has been flagged for inappropriate content.</p>
-  ) : (
-    <button onClick={handleFlagQuestion} className="flag-button">
-      <FontAwesomeIcon icon={faFlag} />
-    </button>
-  )}
-    </div>
-    <div className="question-files-section">
-      {questionFileUrl && (
-        <a href={questionFileUrl} target="_blank" rel="noopener noreferrer">
-          <FontAwesomeIcon icon={faFileAlt} /> View Attached File
-        </a>
-      )}
-    </div>
-    <button onClick={handleRemindMeClick} className='reminder-button'>
-      {reminderId ? "Remove Reminder" : "Remind Me!"}
-    </button>
-    <div className="replies-section-h">Replies</div>
-    <div className="reply-container">
-      {replies.map(reply => (
-        <div key={reply.id} className={`reply ${reply.flagged ? 'flagged' : ''}`}>
-          {!reply.flagged && (
-            <>
-              <button onClick={() => handleDeleteReply(reply.id)} className="delete-button">
-                <FontAwesomeIcon icon={faTrash} />
-              </button>
-              <button onClick={(event) => handleFlagReply(reply.id, event)} className="flag-button">
-                <FontAwesomeIcon icon={faFlag} />
-              </button>
-            </>
-          )}
-          <p className='text'>
-            {reply.flagged ? "This response has been flagged for inappropriate content." : reply.text}
-          </p>
-          {!reply.flagged && reply.fileUrl && (
-            <a href={reply.fileUrl} target="_blank" rel="noopener noreferrer" className='attach-text'>View Attachment</a>
-          )}
-          {!reply.flagged && (
-            <>
-              <p>{new Date(reply.timestamp.seconds * 1000).toLocaleString()}</p>
-              <p
-                onMouseEnter={(event) => handleMouseEnter(reply.answeredBy, reply.answeredByUid, event)}
-                onMouseLeave={handleMouseLeave}
-              >
-                {reply.answeredBy || 'Registered User'}
-              </p>
-            </>
-          )}
-          {showPopup && popupData && (
-            <div className="popup" style={{ top: popupPosition.top, left: popupPosition.left }}>
-              <img src={popupData.profileImage || "https://via.placeholder.com/64x64"} alt="Profile" className="popup-profile-image" />
-              <p>Name: {popupData.name || "Unknown"}</p>
-              <p>Role: {popupData.role || "Unknown"}</p>
-              {popupData.role === "Student" && (
-                <>
-                  <p>Course: {popupData.courseOfStudy || "Unknown"}</p>
-                  <p>Year: {popupData.yearOfStudy || "Unknown"}</p>
-                </>
-              )}
-              <p>Additional: {popupData.additionalInfo || "Unknown"}</p>
-            </div>
-          )}
-        </div>
-      ))}
-    </div>
-    <div className="reply-form">
-      <h3>Your Answer</h3>
-      <form onSubmit={handleReplySubmit}>
-        <textarea
-          value={newReply}
-          onChange={handleReplyChange}
-          placeholder="Write your answer here..."
-        />
-        <div className="anonymous-checkbox">
-          <input
-            type="checkbox"
-            id="anonymous"
-            checked={isAnonymous}
-            onChange={(e) => setIsAnonymous(e.target.checked)}
+          // Update the question to mark it as flagged
+          await updateDoc(questionRef, {
+            flagged: true
+          });
+
+          incrementFlaggedContributions(askedByUid);
+
+          setQuestionData(prev => ({ ...prev, flagged: true }));
+        } else {
+          const replyRef = doc(db, subCategoryPropQ, questionId, subCategoryPropR, flaggingReplyId);
+          const replyDoc = await getDoc(replyRef);
+          const repliedByUid = replyDoc.data().answeredByUid;
+
+          const flagsRef = collection(db, 'flags');
+          const flagDocRef = await addDoc(flagsRef, {
+            responseId: flaggingReplyId,
+            reason: flagReason,
+            timestamp: serverTimestamp(),
+            subtopic: subtopic,
+            questionId: questionId
+          });
+
+          // Update the reply to mark it as flagged
+          await updateDoc(replyRef, {
+            flagged: true
+          });
+
+          incrementFlaggedContributions(repliedByUid);
+        }
+
+        // Assuming you fetch and set replies somewhere else after this update, otherwise, you need to update local state here
+        console.log("Flagged successfully.");
+        setFlagReason('');
+        setShowFlagModal(false);
+        setShowFlagSuccess(true);
+
+        setTimeout(() => {
+          setShowFlagSuccess(false);
+        }, 3000);
+      } catch (error) {
+        console.error("Failed to flag:", error);
+      }
+    }
+  };
+
+  return (
+    <div className="question-thread-page">
+      <div className="question-section">
+        <h2>Question</h2>
+        {questionData.flagged ? (
+          <p className="flagged-message"> This question has been flagged for inappropriate content.</p>
+        ) : (
+          <p>{questionData.text}</p>
+        )}
+        {!questionData.flagged &&
+          <button onClick={handleFlagQuestionClick} className="flag-button">
+            <FontAwesomeIcon icon={faFlag} />
+          </button>
+        }
+      </div>
+      <div className="question-files-section">
+        {questionFileUrl && (
+          <a href={questionFileUrl} target="_blank" rel="noopener noreferrer">
+            <FontAwesomeIcon icon={faFileAlt} /> View Attached File
+          </a>
+        )}
+      </div>
+      <button onClick={handleRemindMeClick} className='reminder-button'>
+        {reminderId ? "Remove Reminder" : "Remind Me!"}
+      </button>
+      <div className="replies-section-h">Replies</div>
+      <div className="reply-container">
+        {replies.map(reply => (
+          <div key={reply.id} className={`reply ${reply.flagged ? 'flagged' : ''}`}>
+            {!reply.flagged && (
+              <>
+                <button onClick={() => handleDeleteReply(reply.id)} className="delete-button">
+                  <FontAwesomeIcon icon={faTrash} />
+                </button>
+                <button onClick={(event) => handleFlagReply(reply.id, event)} className="flag-button">
+                  <FontAwesomeIcon icon={faFlag} />
+                </button>
+              </>
+            )}
+            <p className='text'>
+              {reply.flagged ? "This response has been flagged for inappropriate content." : reply.text}
+            </p>
+            {!reply.flagged && reply.fileUrl && (
+              <a href={reply.fileUrl} target="_blank" rel="noopener noreferrer" className='attach-text'>View Attachment</a>
+            )}
+            {!reply.flagged && (
+              <>
+                <p>{new Date(reply.timestamp.seconds * 1000).toLocaleString()}</p>
+                <p
+                  onMouseEnter={(event) => handleMouseEnter(reply.answeredBy, reply.answeredByUid, event)}
+                  onMouseLeave={handleMouseLeave}
+                >
+                  {reply.answeredBy || 'Registered User'}
+                </p>
+              </>
+            )}
+            {showPopup && popupData && (
+              <div className="popup" style={{ top: popupPosition.top, left: popupPosition.left }}>
+                <img src={popupData.profileImage || "https://via.placeholder.com/64x64"} alt="Profile" className="popup-profile-image" />
+                <p>Name: {popupData.name || "Unknown"}</p>
+                <p>Role: {popupData.role || "Unknown"}</p>
+                {popupData.role === "Student" && (
+                  <>
+                    <p>Course: {popupData.courseOfStudy || "Unknown"}</p>
+                    <p>Year: {popupData.yearOfStudy || "Unknown"}</p>
+                  </>
+                )}
+                <p>Additional: {popupData.additionalInfo || "Unknown"}</p>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+      <div className="reply-form">
+        <h3>Your Answer</h3>
+        <form onSubmit={handleReplySubmit}>
+          <textarea
+            value={newReply}
+            onChange={handleReplyChange}
+            placeholder="Write your answer here..."
           />
-          <label htmlFor="anonymous">Answer anonymously</label>
+          <div className="anonymous-checkbox">
+            <input
+              type="checkbox"
+              id="anonymous"
+              checked={isAnonymous}
+              onChange={(e) => setIsAnonymous(e.target.checked)}
+            />
+            <label htmlFor="anonymous">Answer anonymously</label>
+          </div>
+          <input type="file" onChange={handleFileChange} />
+          <button type="submit">Submit Answer</button>
+        </form>
+      </div>
+      {showFlagModal && (
+  <>
+    <div className="backdrop" onClick={() => setShowFlagModal(false)}></div>
+    <div className="modal">
+      <h3>Flag {isFlaggingQuestion ? 'Question' : 'Reply'}</h3>
+      <form onSubmit={handleFlagSubmit}>
+        <textarea
+          value={flagReason}
+          onChange={(e) => setFlagReason(e.target.value)}
+          placeholder={`Reason for flagging this ${isFlaggingQuestion ? 'question' : 'reply'}...`}
+          className="flag-textarea"
+        />
+        <div className="flag-buttons">
+          <button type="submit" className="flag-submit-button">Submit Flag</button>
+          <button type="button" className="flag-cancel-button" onClick={() => setShowFlagModal(false)}>Cancel</button>
         </div>
-        <input type="file" onChange={handleFileChange} />
-        <button type="submit">Submit Answer</button>
       </form>
     </div>
-    {showFlagModal && (
-      <>
-        <div className="backdrop" onClick={() => setShowFlagModal(false)}></div>
-        <div className="modal">
-          <h3>Flag Reply</h3>
-          <form onSubmit={handleFlagSubmit}>
-            <textarea
-              value={flagReason}
-              onChange={(e) => setFlagReason(e.target.value)}
-              placeholder="Reason for flagging this reply..."
-              className="flag-textarea"
-            />
-            <div className="flag-buttons">
-              <button type="submit" className="flag-submit-button">Submit Flag</button>
-              <button type="button" className="flag-cancel-button" onClick={() => setShowFlagModal(false)}>Cancel</button>
-            </div>
-          </form>
-        </div>
-      </>
-    )}
-    {showFlagSuccess && (
-      <div className="flag-success-popup">
-        The response has been flagged and will be manually reviewed!
-      </div>
-    )}
-  </div>
-);
+  </>
+)}
 
+      {showFlagSuccess && (
+        <div className="flag-success-popup">
+          The response has been flagged and will be manually reviewed!
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default QuestionsThread;

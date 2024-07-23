@@ -105,3 +105,14 @@ body {
     border-collapse: collapse;
     table-layout: fixed; /* Ensures equal spacing */
 }
+
+
+.flagged-question {
+    display: inline-block;
+    background-color: #ffe6e6;
+    color: #d9534f;
+    border: 1px solid #d9534f;
+    border-radius: 5px;
+    padding: 5px 10px;
+    font-weight: bold;
+}

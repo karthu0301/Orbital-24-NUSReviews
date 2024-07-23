@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import './ProfileContent.css';
 import { getAuth, updateProfile } from 'firebase/auth';
@@ -68,7 +69,6 @@ const ProfileContent = () => {
     setErrors(newErrors);
     return isValid;
   };
-  
 
   const handleSave = async () => {
     const isFormValid = await validateForm();
@@ -194,9 +194,9 @@ const ProfileContent = () => {
           <button className="save-button" onClick={handleSave}>Save</button>
         </div>
         <div> 
-          <note>Note: Completing your profile is optional, but it helps other users learn more about your credibility and background.</note>
+          <p>Note: Completing your profile is optional, but it helps other users learn more about your credibility and background.</p>
         </div>
-        <newnote>* A Display Name is required, it will be shown when you make contributions that are not anonymous.</newnote>
+        <p>* A Display Name is required, it will be shown when you make contributions that are not anonymous.</p>
       </div>
     </div>
   );
