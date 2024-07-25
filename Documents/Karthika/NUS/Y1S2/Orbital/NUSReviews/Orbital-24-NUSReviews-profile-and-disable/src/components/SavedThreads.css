@@ -1,0 +1,79 @@
+.saved-page {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.saved-page h1 {
+  text-align: center;
+  font-weight: 600;
+  font-size:x-large;
+  margin-bottom: 15px;
+}
+
+.saved-page select {
+  margin-bottom: 10px;
+  margin-right: 10px;
+  padding: 5px;
+}
+
+.saved-page .question-cards-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  width: 100%;
+  margin-bottom: 40px;
+}
+
+.saved-page .question-card {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%; /* Ensure each card has full height */
+  position: relative; /* Needed for absolute positioning of the notification dot */
+}
+
+.saved-page .question-card a {
+  color: black;
+  margin-bottom: auto;
+  text-decoration: none;
+  transition: color 0.3s ease, text-decoration 0.3s ease;
+}
+
+.saved-page .question-card a:hover {
+  color: #0056b3;
+  text-decoration: underline;
+}
+
+.saved-page .question-card p {
+  color: black;
+  font-size: 13px;
+}
+
+.saved-page button.remove-reminder {
+  margin-top: 8px;
+  background-color: #D97300;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.saved-page .remove-reminder:hover {
+  background-color: #e5973e;
+}
+
+.saved-page .notification-dot {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  color: #d30f06;
+  height: auto;
+  width: 18.5px;
+}

@@ -1,0 +1,108 @@
+body, html {
+    margin: 0;
+    padding: 0;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between; /* Distributes space between and around content items */
+    align-items: center; /* Vertically centers the items within the navbar */
+    height: 12.5vh;
+    background-color: #003882;
+    color: white; /* Text color inside the navbar */
+    padding: 0 20px; /* Adds horizontal padding within the navbar */
+}
+
+.logo {
+    font-size: 3.75vw;
+    font-family: 'Libre Barcode 128 Text', sans-serif;
+    white-space: nowrap;
+}
+
+.navbar-links {
+    display: flex;
+    align-items: center;
+    gap: 0.75vw; /* Space between each button */
+}
+
+.nav-item, .login-button {
+    padding: 0.52vw 1.04vw; /* Padding inside each button */
+    font-size: 0.9vw;
+    font-family: 'Libre Franklin', sans-serif;
+    font-weight: 700;
+    color: black; /* Text color */
+    background-color: #EEEEEE;
+    border-radius: 8px; /* Rounded corners for buttons */
+    border: 1.5px solid black;
+    text-transform: uppercase;
+    cursor: pointer; /* Changes the cursor to indicate clickable items */
+    transition: background-color 0.3s, color 0.3s; /* Transition for hover effects */
+}
+
+.navbar .login-button {
+    background-color: #D97300;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); /* Shadow for 3D effect */
+    color: white;
+}
+
+
+.navbar .nav-item:hover, .login-button:hover {
+    background-color: #cccccc;
+    color: #333;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-menu {
+    display: block;
+    position: absolute;
+    background-color: white;
+    min-width: 85px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.dropdown-item {
+    color: black;
+    padding: 1vh 1vw;
+    font-family: 'Libre Franklin', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    text-decoration: none;
+    display: block;
+    cursor: pointer;
+    text-align: left;
+    width: 100%;
+    background: none;
+    border: none;
+}
+
+.dropdown-item:hover {
+    background-color: #ddd;
+}
+
+.navbar .notification-dot-more {
+    position: absolute;
+    height: 12px;
+    width: 12px;
+    background-color: #d30f06;
+    border-radius: 50%;
+    right: -2.5px;
+    top: -2.5px;
+}
+
+.navbar .notification-dot-in {
+    position: absolute;
+    height: 11px;
+    width: 11px;
+    background-color: #d30f06;
+    border-radius: 50%;
+    margin-left: 5px;
+    right: 8px;
+    top: 50px;
+}
