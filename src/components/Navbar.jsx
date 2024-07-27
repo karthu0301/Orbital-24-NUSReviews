@@ -68,17 +68,19 @@ const Navbar = ({}) => {
                 {
                     user 
                     ? (
-                        <div className="dropdown">
-                            <button className="nav-item" onClick={toggleDropdown}>More</button>
-                            {dropdownOpen && (
-                                <div className="dropdown-menu">
-                                    <Link to="/profile" className="dropdown-item" onClick={() => setDropdownOpen(false)}>Profile</Link>
-                                    {ShowNotificationDot && <span className='notification-dot-in'></span>}
-                                    <Link to="/saved-threads" className="dropdown-item" onClick={() => setDropdownOpen(false)}>Saved Threads</Link>
-                                    <button className="dropdown-item" onClick={handleSignOut}>Log Out</button>
-                                </div>
-                            )}
-                            {ShowNotificationDot && <span className='notification-dot-more'></span>}
+                        <div style={{ display: 'flex', justifyContent: 'center',  flexDirection: 'column' }}>
+                        <button className="more-button" onClick={toggleDropdown}>More</button>
+                            <div className="dropdown">
+                                {dropdownOpen && (
+                                    <div className="dropdown-menu">
+                                        <Link to="/profile" className="dropdown-item" onClick={() => setDropdownOpen(false)}>Profile</Link>
+                                        {ShowNotificationDot && <span className='notification-dot-in'></span>}
+                                        <Link to="/saved-threads" className="dropdown-item" onClick={() => setDropdownOpen(false)}>Saved Threads</Link>
+                                        <button className="dropdown-item" onClick={handleSignOut}>Log Out</button>
+                                    </div>
+                                )}
+                                {ShowNotificationDot && <span className='notification-dot-more'></span>}
+                            </div>
                         </div>
                     ) 
                     : <button onClick={handleLoginClick} className="login-button">Login</button>

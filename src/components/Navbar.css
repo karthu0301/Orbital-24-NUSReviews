@@ -7,7 +7,8 @@ body, html {
     display: flex;
     justify-content: space-between; /* Distributes space between and around content items */
     align-items: center; /* Vertically centers the items within the navbar */
-    height: 12.5vh;
+    height: auto;
+    min-height: 75px;
     background-color: #003882;
     color: white; /* Text color inside the navbar */
     padding: 0 20px; /* Adds horizontal padding within the navbar */
@@ -25,7 +26,7 @@ body, html {
     gap: 0.75vw; /* Space between each button */
 }
 
-.nav-item, .login-button {
+.nav-item, .login-button, .more-button {
     padding: 0.52vw 1.04vw; /* Padding inside each button */
     font-size: 0.9vw;
     font-family: 'Libre Franklin', sans-serif;
@@ -46,7 +47,7 @@ body, html {
 }
 
 
-.navbar .nav-item:hover, .login-button:hover {
+.navbar .nav-item:hover, .login-button:hover, .more-button:hover {
     background-color: #cccccc;
     color: #333;
 }
@@ -65,13 +66,14 @@ body, html {
     z-index: 1;
     border-radius: 5px;
     overflow: hidden;
+    margin-top: 2px;
 }
 
 .dropdown-item {
     color: black;
     padding: 1vh 1vw;
     font-family: 'Libre Franklin', sans-serif;
-    font-size: 12px;
+    font-size: 1vw;
     font-weight: 500;
     text-decoration: none;
     display: block;
@@ -92,8 +94,9 @@ body, html {
     width: 12px;
     background-color: #d30f06;
     border-radius: 50%;
-    right: -2.5px;
-    top: -2.5px;
+    left: 267%;
+    bottom: 100%;
+    margin-bottom: 1.85vw;
 }
 
 .navbar .notification-dot-in {

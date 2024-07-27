@@ -73,13 +73,13 @@ body {
 
 .profile-info-label {
   width: 200px;
-  font-size: 14px;
+  font-size: 80%;
   font-weight: 500;
   color: black;
 }
 
 .profile-info-value {
-  font-size: 14px;
+  font-size: 80%;
   font-weight: 400;
   color: black;
   border: none;

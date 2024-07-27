@@ -1,7 +1,7 @@
 describe('Login Component', () => {
   beforeEach(() => {
     // Visit the login page
-    cy.visit('https://nusreviews-78805.web.app/login');  // Adjust the URL to the path of your login component
+    cy.visit('https://nusreviews-78805.web.app/login');
   });
 
   it('renders login page', () => {
@@ -25,14 +25,14 @@ describe('Login Component', () => {
     cy.get('input[placeholder="password"]').type('password');
     cy.get('.login-container button.login-button').click();
 
-    cy.url().should('include', '/');  // Adjust according to your app's behavior
+    cy.url().should('include', '/');
   });
 
   it('redirects to the sign-up page when clicking create account', () => {
     // Click the create account button
-    cy.get('.login-container a.login-button').click();  // Use a more specific selector
+    cy.get('.login-container a.login-button').click();
 
     // Check that the URL includes the sign-up path
-    cy.url().should('include', '/login/signup');  // Adjust according to your app's sign-up path
+    cy.url().should('include', '/login/signup');
   });
 });

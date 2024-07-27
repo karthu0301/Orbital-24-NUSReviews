@@ -11,30 +11,37 @@ describe('DropdownMenu.cy.jsx', () => {
     { href: "/courses/polls", label: "Polls" },
   ];
 
-  it('renders DropdownMenu component', () => {
+  beforeEach(() => {
     mount(
       <MemoryRouter>
         <DropdownMenu title="Courses" items={items} navigateTo={'/courses'} />
       </MemoryRouter>
     );
+  });
 
-    // Check if the dropdown button is rendered with the correct title
-    cy.get('.dropbtn').contains('Courses');
+  it('renders the dropdown button with the correct title', () => {
+    cy.get('.dropbtn').should('contain', 'Courses').and('be.visible');
+  });
 
-    // Ensure the dropdown content is hidden initially
+  it('initially hides the dropdown content', () => {
     cy.get('.dropdown-content').should('not.be.visible');
+  });
 
-    // Simulate hover to display dropdown content
+  it('shows the dropdown content on hover', () => {
     cy.get('.dropdown').trigger('mouseover');
     cy.get('.dropdown-content').should('be.visible');
+  });
 
-    // Check if the dropdown items are rendered correctly
+  it('renders all dropdown items correctly', () => {
+    cy.get('.dropdown').trigger('mouseover');
     cy.get('.dropdown-content a').should('have.length', items.length);
     items.forEach(item => {
-      cy.get('.dropdown-content a').contains(item.label);
+      cy.get('.dropdown-content').contains(item.label).should('be.visible');
     });
+  });
 
-    // Simulate mouse leave to hide dropdown content
+  it('hides the dropdown content on mouseout', () => {
+    cy.get('.dropdown').trigger('mouseover');
     cy.get('.dropdown').trigger('mouseout');
     cy.get('.dropdown-content').should('not.be.visible');
   });

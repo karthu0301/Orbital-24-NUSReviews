@@ -1,5 +1,6 @@
 import './FoodQuestionsList.css';
 import { useState, useEffect } from 'react';
+import Filter from 'bad-words';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
@@ -19,9 +20,11 @@ const FoodQuestionsList = () => {
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [category, setCategory] = useState('');
   const [errors, setErrors] = useState({});
+  const [errorMessage, setErrorMessage] = useState('');
   const [showPopup, setShowPopup] = useState(false);
   const [popupData, setPopupData] = useState(null);
   const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
+  const filter = new Filter();
 
   const handleMouseEnter = async (askerUid, event) => {
     if (askerUid !== null) {
@@ -116,6 +119,8 @@ const FoodQuestionsList = () => {
         fileUrl = await getDownloadURL(uploadTaskSnapshot.ref); // Corrected URL retrieval
       }
 
+      const isProfane = filter.isProfane(newQuestion); // Check for profanity
+
       try {
         const docRef = await addDoc(collection(db, "foodQuestions"), {
           text: newQuestion,
@@ -128,8 +133,13 @@ const FoodQuestionsList = () => {
           askedByUid: askerUid,
           reminderSet: false,
           lastReplyTimestamp: serverTimestamp(),
-          flagged: false      
+          flagged: isProfane      
         });
+
+        if (isProfane) {
+          alert("Your question contains inappropriate content and has been flagged for review.");
+        }
+
         const newQuestionObj = {
           id: docRef.id,
           text: newQuestion,
@@ -141,7 +151,7 @@ const FoodQuestionsList = () => {
           fileUrl: fileUrl,
           reminderSet: false,
           lastReplyTimestamp: serverTimestamp(),
-          flagged: false  
+          flagged: isProfane  
         };
 
         setQuestions(prevQuestions => [newQuestionObj, ...prevQuestions]);
@@ -149,9 +159,22 @@ const FoodQuestionsList = () => {
         setCategory('');
         setAttachedFile(null);
         setIsAnonymous(false);
+        setErrorMessage('');
       } catch (error) {
         console.error("Error adding question: ", error);
       }
+    }
+  };
+
+  const handleTextChange = (e) => {
+    const input = e.target.value;
+    setNewQuestion(input);
+
+    const isProfane = filter.isProfane(input);
+    if (isProfane) {
+        setErrorMessage("Your input contains inappropriate content.");
+    } else {
+        setErrorMessage("");
     }
   };
 
@@ -211,10 +234,11 @@ const FoodQuestionsList = () => {
               name="newQuestion"
               type="text"
               value={newQuestion}
-              onChange={e => setNewQuestion(e.target.value)}
+              onChange={handleTextChange}
               placeholder="Ask a new question..."
               className="text-input"
             />
+            {errorMessage && <p className="error-message">{errorMessage}</p>}
             <input type="file" onChange={handleFileChange} />
             <div className="category-select">
               <select

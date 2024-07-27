@@ -9,10 +9,10 @@
     background-color: #D97300;
     color: black;
     padding: 1vw 0;
-    font-size: 24px;
+    font-size: 20px;
     font-family: 'Libre Franklin', sans-serif;
     font-weight: 700;
-    border: 2.5px solid black; /* Solid black border */
+    border: 2px solid black; /* Solid black border */
     cursor: pointer;
     display: flex;
     align-items: center;

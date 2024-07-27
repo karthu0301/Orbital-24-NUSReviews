@@ -1,7 +1,7 @@
 describe('SignUp Component', () => {
   beforeEach(() => {
     // Visit the sign-up page
-    cy.visit('https://nusreviews-78805.web.app/login/signup');  // Adjust the URL to the path of your sign-up component
+    cy.visit('https://nusreviews-78805.web.app/login/signup');
   });
 
   it('renders sign-up page', () => {
@@ -64,6 +64,6 @@ describe('SignUp Component', () => {
     });
 
     // Increase the timeout to wait for the URL change
-    cy.url({ timeout: 10000 }).should('include', '/login');  // Adjust according to your app's behavior
+    cy.url({ timeout: 10000 }).should('include', '/login');
   });
 });

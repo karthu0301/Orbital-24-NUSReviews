@@ -2,6 +2,7 @@
   padding: 20px;
   display: flex;
   flex-direction: column;
+  min-width:100%;
 }
 
 .saved-page h1 {
@@ -15,6 +16,8 @@
   margin-bottom: 10px;
   margin-right: 10px;
   padding: 5px;
+  border: 1px solid #ccc; /* Grey border */
+  border-radius: 4px;
 }
 
 .saved-page .question-cards-container {
@@ -77,3 +80,4 @@
   height: auto;
   width: 18.5px;
 }
+
