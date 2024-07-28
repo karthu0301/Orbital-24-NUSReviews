@@ -336,3 +336,18 @@
 .modal-content button:hover {
   background-color: #0056b3;
 }
+
+.modal-content .delete-confirm-button {
+  padding: 10px 20px;
+  border: none;
+  background-color:#f44336 !important;
+  color: white;
+  cursor: pointer;
+  border-radius: 5px;
+  flex: 1;
+  margin: 0 20px;
+}
+
+.modal-content .delete-confirm-button:hover {
+    background-color: rgb(202, 19, 56) !important;
+}

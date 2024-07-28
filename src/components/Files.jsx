@@ -126,7 +126,7 @@ const Files = () => {
           <option value="oldest">Oldest</option>
         </select>
       </div>
-      <div className='files-container'>
+      <div className='files-container' style={{ display: 'flex', justifyContent: 'center' }}>
         {sortedFiles.length > 0 ? sortedFiles.map((file, index) => (
           <div className='file-card' key={index}>
             <FontAwesomeIcon icon={faFileAlt} className="file-icon" />

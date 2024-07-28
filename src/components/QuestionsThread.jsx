@@ -261,6 +261,14 @@ const QuestionsThread = ({ subCategoryPropQ, subCategoryPropR, subtopic }) => {
   };
 
   const handleDeleteReplyInitiate = async (replyId) => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    if (!user) {
+      alert("Please log in to delete replies.");
+      return;
+    }
+
     const replyRef = doc(db, subCategoryPropQ, questionId, subCategoryPropR, replyId);
     try {
       const replyDoc = await getDoc(replyRef); // Ensure you await the getDoc call
@@ -282,14 +290,6 @@ const QuestionsThread = ({ subCategoryPropQ, subCategoryPropR, subtopic }) => {
   };
 
   const handleDeleteReply = async () => {
-    const auth = getAuth();
-    const user = auth.currentUser;
-
-    if (!user) {
-      alert("Please log in to delete replies.");
-      return;
-    }
-
     try {
       const replyRef = doc(db, subCategoryPropQ, questionId, subCategoryPropR, replyToDeleteId);
       const replyDoc = await getDoc(replyRef);
@@ -512,7 +512,7 @@ const QuestionsThread = ({ subCategoryPropQ, subCategoryPropR, subtopic }) => {
           <div className="modal-content">
             <p>Are you sure you want to delete this reply?</p>
             <div className="modal-buttons">
-              <button onClick={handleDeleteReply}>Confirm</button>
+              <button className='delete-confirm-button' onClick={handleDeleteReply}>Confirm</button>
               <button onClick={() => setShowDeleteConfirm(false)}>Cancel</button>
             </div>
           </div>

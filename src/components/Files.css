@@ -68,6 +68,14 @@
     margin: 5px 0;
 }
 
+.file-info a {
+    color: #0056b3;
+    text-decoration: none;
+}
+
+.file-info a:hover {
+    text-decoration: underline;
+}
 .files-container p {
     font-size: 15px;
     text-align: center;
