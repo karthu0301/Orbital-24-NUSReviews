@@ -4,7 +4,7 @@ import { collection, addDoc } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
-import './PollForm.css'; // Assuming CSS is in this file
+import './PollForm.css';
 
 const PollForm = ({ fixedCategory }) => {
     const [title, setTitle] = useState('');
@@ -59,7 +59,8 @@ const PollForm = ({ fixedCategory }) => {
             category,
             multiple,
             creatorId,
-            createdAt: new Date()
+            createdAt: new Date(), 
+            flagged: false
         };
 
         try {

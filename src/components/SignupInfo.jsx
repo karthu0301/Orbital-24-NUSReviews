@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAuth, createUserWithEmailAndPassword, sendEmailVerification, signOut, updateProfile } from "firebase/auth";
+import { doc, setDoc } from 'firebase/firestore';
+import { db } from '../firebase-config';
 import './SignupInfo.css';
 
 const SignUpInfo = () => {
@@ -34,6 +36,14 @@ const SignUpInfo = () => {
       // Update the display name in Firebase Auth
       await updateProfile(userCredential.user, { displayName: displayName });
       console.log('Display name updated:', displayName);
+
+      // Initialize user profile in Firestore
+      const userRef = doc(db, 'users', userCredential.user.uid);
+      await setDoc(userRef, {
+        displayName: displayName,
+        email: email,
+      }, { merge: true });
+      console.log('User profile initialized in Firestore.');
 
       // Send verification email
       await sendEmailVerification(userCredential.user);

@@ -93,7 +93,11 @@ const PollList = ({ filterCategory }) => {
         }
         try {
             const pollRef = doc(db, "polls", currentPollId);
-            // Here you would add the logic to add the flag to the database
+            
+            await updateDoc(pollRef, {
+                flagged: true
+            });
+
             console.log("Flag submitted for poll", currentPollId, "with reason:", flagReason);
             setFlagReason('');
             setFlagModalOpen(false);
@@ -139,19 +143,27 @@ const PollList = ({ filterCategory }) => {
             <div className="polls-grid">
                 {polls.filter(poll => filterCategory ? poll.category === filterCategory : selectedCategory === 'all' || poll.category === selectedCategory).map(poll => (
                     <div key={poll.id} className="poll-container">
-                        <h3>{poll.title} - {poll.category ? poll.category.charAt(0).toUpperCase() + poll.category.slice(1) : 'Unknown'}</h3>
-                        <ul>
-                            {poll.options.map((option, index) => (
-                                <li key={index}>
-                                    <div>{option.option}: {option.votes} votes</div>
-                                    <button className='vote-button'onClick={() => handleVote(poll.id, index)}>Vote</button>
-                                    <div className="vote-bar" style={{ width: `${poll.totalVotes ? (option.votes / poll.totalVotes * 100) : 0}%`, backgroundColor: 'lightgreen', height: '20px', marginBottom: '10px' }}></div>
-                                </li>
-                            ))}
-                        </ul>
-                        <button className="flag-poll-button" onClick={() => handleOpenFlagModal(poll.id)}>
-                            <FontAwesomeIcon icon={faFlag} />
-                        </button>
+                        {poll.flagged ? (
+                            <div className="flagged-content">
+                                <h3>This poll has been flagged for inappropriate content.</h3>
+                            </div>
+                        ) : (
+                            <>
+                                <h3>{poll.title} - {poll.category ? poll.category.charAt(0).toUpperCase() + poll.category.slice(1) : 'Unknown'}</h3>
+                                <ul>
+                                    {poll.options.map((option, index) => (
+                                        <li key={index}>
+                                            <div>{option.option}: {option.votes} votes</div>
+                                            <button className='vote-button' onClick={() => handleVote(poll.id, index)}>Vote</button>
+                                            <div className="vote-bar" style={{ width: `${poll.totalVotes ? (option.votes / poll.totalVotes * 100) : 0}%`, backgroundColor: 'lightgreen', height: '20px', marginBottom: '10px' }}></div>
+                                        </li>
+                                    ))}
+                                </ul>
+                                <button className="flag-poll-button" onClick={() => handleOpenFlagModal(poll.id)}>
+                                    <FontAwesomeIcon icon={faFlag} />
+                                </button>
+                            </>
+                        )}
                     </div>
                 ))}
             </div>

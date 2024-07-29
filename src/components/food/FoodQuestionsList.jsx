@@ -114,9 +114,9 @@ const FoodQuestionsList = () => {
     let fileUrl = null;
     if (newQuestion.trim() !== '') {
       if (attachedFile) {
-        const fileRef = ref(storage, `foodReplies/${attachedFile.name}`); // Corrected reference creation
-        const uploadTaskSnapshot = await uploadBytes(fileRef, attachedFile); // Corrected upload syntax
-        fileUrl = await getDownloadURL(uploadTaskSnapshot.ref); // Corrected URL retrieval
+        const fileRef = ref(storage, `foodReplies/${attachedFile.name}`);
+        const uploadTaskSnapshot = await uploadBytes(fileRef, attachedFile);
+        fileUrl = await getDownloadURL(uploadTaskSnapshot.ref);
       }
 
       const isProfane = filter.isProfane(newQuestion); // Check for profanity

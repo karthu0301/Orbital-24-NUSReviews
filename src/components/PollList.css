@@ -82,7 +82,7 @@
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     z-index: 1000;
     border-radius: 8px;
-    width: 300px; /* Increased width for larger container */
+    width: 300px;
 }
 
 .modal h3 {
@@ -119,4 +119,14 @@
     width: 100%;
     padding: 10px;
     margin-top: 10px;
+}
+
+.flagged-content {
+    background-color: #ffcccc;
+    padding: 20px;
+    text-align: center;
+}
+
+.flagged-content h3 {
+    color: #f44336;
 }

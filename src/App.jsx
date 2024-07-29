@@ -11,6 +11,7 @@ import ProfilePage from './components/pages/ProfilePage';
 import AllPollsPage from './components/pages/AllPollsPage';
 import AllFilesPage from './components/pages/AllFilesPage';
 import SavedThreadsPage from './components/pages/SavedThreadsPage';
+import ContactPage from './components/pages/ContactPage';
 import CoursesHomePage from './components/pages/courses-subpages/CoursesHomePage';
 import CoursesGuidePage from './components/pages/courses-subpages/CoursesGuidePage';
 import CoursesPollPage from './components/pages/courses-subpages/CoursesPollPage';
@@ -71,6 +72,9 @@ const router = createBrowserRouter(
     </Route>
     <Route path='/saved-threads' element={<AltLayout />}>
       <Route index element={<SavedThreadsPage />} />
+    </Route>
+    <Route path='/contact-us' element={<AltLayout />}>
+      <Route index element={<ContactPage />} />
     </Route>
   </>
   )

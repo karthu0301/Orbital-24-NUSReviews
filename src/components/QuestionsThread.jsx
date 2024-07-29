@@ -87,14 +87,13 @@ const QuestionsThread = ({ subCategoryPropQ, subCategoryPropR, subtopic }) => {
           console.log('Last viewed timestamp updated successfully.');
         }).catch(error => {
           console.error('Failed to update last viewed timestamp:', error);
-          // Optionally retry the update or inform the user
           alert('Failed to update your activity, please try again!');
         });
       };
   
       updateLastViewed();
     }
-  }, [questionId]);  // Ensure this effect is correctly dependent on questionId and user's state if needed
+  }, [questionId]);
 
   const handleReplyChange = (e) => {
     setNewReply(e.target.value);
@@ -180,6 +179,11 @@ const QuestionsThread = ({ subCategoryPropQ, subCategoryPropR, subtopic }) => {
         setNewReply('');
         setAttachedFile(null);
         setIsAnonymous(false);
+
+        const userRef = doc(db, 'users', user.uid);
+        await updateDoc(userRef, {
+          contributionsThisSemester: increment(1)
+        });
 
         if (repliesSnapshot.empty) {
           const questionRef = doc(db, subCategoryPropQ, questionId);
@@ -271,7 +275,7 @@ const QuestionsThread = ({ subCategoryPropQ, subCategoryPropR, subtopic }) => {
 
     const replyRef = doc(db, subCategoryPropQ, questionId, subCategoryPropR, replyId);
     try {
-      const replyDoc = await getDoc(replyRef); // Ensure you await the getDoc call
+      const replyDoc = await getDoc(replyRef);
 
       if (replyDoc.exists()) {
         const replyData = replyDoc.data();
@@ -338,10 +342,12 @@ const QuestionsThread = ({ subCategoryPropQ, subCategoryPropR, subtopic }) => {
       await updateDoc(userRef, {
         flaggedContributions: increment(1)
       });
+      console.log("Flagged contributions incremented successfully for user:", userId);
     } catch (error) {
       console.error("Failed to increment flagged contributions:", error);
     }
   };
+  
 
   const handleFlagSubmit = async (e) => {
     e.preventDefault();
@@ -389,7 +395,6 @@ const QuestionsThread = ({ subCategoryPropQ, subCategoryPropR, subtopic }) => {
           incrementFlaggedContributions(repliedByUid);
         }
 
-        // Assuming you fetch and set replies somewhere else after this update, otherwise, you need to update local state here
         console.log("Flagged successfully.");
         setFlagReason('');
         setShowFlagModal(false);
@@ -483,7 +488,7 @@ const QuestionsThread = ({ subCategoryPropQ, subCategoryPropR, subtopic }) => {
             )}
             {!reply.flagged && (
               <>
-                <p>{new Date(reply.timestamp.seconds * 1000).toLocaleString()}</p>
+                <p>{reply.timestamp && reply.timestamp.seconds ? new Date(reply.timestamp.seconds * 1000).toLocaleString() : 'Timestamp not available'}</p>
                 <p onClick={(event) => handleProfileClick(reply.answeredByUid, event)} className="user-name-link">
                   {reply.answeredBy || 'Registered User'}
                 </p>
