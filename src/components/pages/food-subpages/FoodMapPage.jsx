@@ -30,13 +30,18 @@ const FoodMapPage = () => {
           [amenity=restaurant]
           (around:1000,${center.lat},${center.lng});
         out body;
+        >;
+        out skel qt;
       `;
       try {
         const response = await axios.get(overpassUrl, { params: { data: query } });
         const data = response.data.elements.map(place => ({
           name: place.tags.name || "Unnamed Food Place",
           lat: place.lat,
-          lng: place.lon
+          lng: place.lon,
+          address: place.tags.address ? `${place.tags.address.street}, ${place.tags.address.city}` : "No address available",
+          openingHours: place.tags.opening_hours || "No opening hours available",
+          rating: place.tags.rating || "No rating available"
         }));
         setPlaces(data);
       } catch (error) {
@@ -54,10 +59,19 @@ const FoodMapPage = () => {
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          maxZoom={22}
+          maxNativeZoom={19}
         />
         {places.map((place, index) => (
           <Marker key={index} position={[place.lat, place.lng]}>
-            <Popup>{place.name}</Popup>
+            <Popup>
+            <div>
+              <strong>{place.name}</strong><br />
+              <strong>Address:</strong> {place.address}<br />
+              <strong>Opening Hours:</strong> {place.openingHours}<br />
+              <strong>Rating:</strong> {place.rating}
+            </div>
+      </Popup>
           </Marker>
         ))}
       </MapContainer>
