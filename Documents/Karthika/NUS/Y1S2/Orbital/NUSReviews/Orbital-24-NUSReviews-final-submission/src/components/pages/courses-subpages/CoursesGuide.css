@@ -1,0 +1,67 @@
+.guide-container {
+  width: 80%;
+  margin: auto;
+  margin-top: 0;
+  font-family: 'Libre Franklin', sans-serif;
+}
+
+.guide-container h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 32px;
+  font-weight: 550;
+}
+
+.guide-container h2 {
+    text-align: center;
+    font-family: 'Libre Franklin', sans-serif;
+    margin-bottom: 20px;
+    font-size: 17.5px;
+}
+
+.guide-container .registration-link {
+    color: #1c1ce5;
+    text-decoration: underline;
+    text-align: center;
+    font-family: 'Libre Franklin', sans-serif;
+    margin-bottom: 20px;
+    font-size: 17.5px;
+}
+
+.step-container {
+  margin-bottom: 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.step-title {
+  background-color: #f8f8f8;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.step-content {
+  display: flex;
+  padding: 20px;
+  align-items: center;
+  white-space: pre-wrap;
+}
+
+.step-text {
+  flex: 1;
+  padding-right: 20px;
+}
+
+.step-text a {
+  color: #1c1ce5; /* Make the link blue */
+  text-decoration: underline; /* Add underline to the link */
+}
+
+.step-image img {
+  width: 300px;
+  height: auto;
+  border-radius: 8px;
+}

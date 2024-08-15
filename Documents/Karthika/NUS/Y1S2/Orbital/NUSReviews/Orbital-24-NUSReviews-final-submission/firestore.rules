@@ -1,0 +1,85 @@
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    
+    match /housingQuestions/{questionId} {
+      allow read: if true; 
+      allow create: if true; 
+      allow update: if true; 
+
+      
+      match /housingReplies/{replyId} {
+        allow read: if true; 
+        allow create: if request.auth != null; 
+        allow update: if true;
+        allow delete: if request.auth != null && resource.data.answeredByUid == request.auth.uid;
+      }
+    }
+      
+     match /coursesQuestions/{questionId} {
+      allow read: if true; 
+      allow create: if true; 
+      allow update: if true; 
+
+      
+      match /coursesReplies/{replyId} {
+        allow read: if true; 
+        allow create: if request.auth != null; 
+        allow update: if true;
+        allow delete: if request.auth != null && resource.data.answeredByUid == request.auth.uid;
+      }
+    }
+      
+      
+       match /foodQuestions/{questionId} {
+      allow read: if true; 
+      allow create: if true; 
+      allow update: if true;
+      
+      
+      match /foodReplies/{replyId} {
+        allow read: if true; 
+        allow create: if request.auth != null; 
+        allow update: if true;
+        allow delete: if request.auth != null && resource.data.answeredByUid == request.auth.uid;
+      }
+      }
+    
+    // User-specific rules
+    match /users/{userId} {
+      allow read: if true; 
+      allow write: if request.auth != null && request.auth.uid == userId; 
+      allow update: if request.auth.uid == userId || isAdmin();
+      
+      match /reminders/{reminderId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId; 
+    	}
+    }
+
+    // Polls rules
+    match /polls/{pollId} {
+      allow read: if true; 
+      allow create: if true;
+      allow update: if request.auth != null; 
+    }
+    
+    match /users/{userId}/flags/{flag} {
+      allow read, create: if true;
+      allow update: if true;
+    }
+    
+    match /flags/{flagId} {
+      allow read, create: if true;
+      allow update: if true;
+    }
+
+		match /adminFeedback/{feedbackId} {
+      allow read: if true; 
+      allow create: if true; 
+    }
+    
+    function isAdmin() {
+      return request.auth.token.admin == true;
+    }
+  }
+}

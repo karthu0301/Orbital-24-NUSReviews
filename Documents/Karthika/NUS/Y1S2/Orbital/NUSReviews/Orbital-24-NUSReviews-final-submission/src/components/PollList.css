@@ -1,0 +1,132 @@
+.polls-container {
+    width: 100%;
+    max-width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+    overflow: hidden; 
+}
+
+.polls-container .category-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding: 0 10px;
+}
+
+.category-buttons .selected {
+    background-color: #e57200;
+    color: white;
+    padding: 5px 15px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.poll-topic {
+    font-size: 22px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.polls-container .polls-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    width: 100%;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.polls-grid .poll-container {
+    background: #fff;
+    border: 1px solid #ccc;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.poll-container .vote-button {
+    background-color: #cbd9eb;
+    border-radius: 4px;
+    font-size: small;
+    font-weight: 600;
+    padding: 3px;
+}
+
+.poll-container .vote-bar {
+    height: 10px;
+    background-color: #003882 !important;
+    margin: 5px 0;
+    transition: width 0.3s ease;
+    border-radius: 2px;
+}
+
+.backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+  
+.modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    border-radius: 8px;
+    width: 300px;
+}
+
+.modal h3 {
+    font-weight: bold;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+  
+.modal .submit-button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+  
+.modal .cancel-button {
+    background-color: #f44336;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+  
+.flag-textarea {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+}
+
+.flagged-content {
+    background-color: #ffcccc;
+    padding: 20px;
+    text-align: center;
+}
+
+.flagged-content h3 {
+    color: #f44336;
+}

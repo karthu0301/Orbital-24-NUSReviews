@@ -1,0 +1,39 @@
+.footer {
+    width: 100%;
+    min-height: 40px;
+    background: #dadada;
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    padding: 0 20px; 
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;
+    flex-wrap: nowrap; 
+    width: 100%; 
+}
+
+.footer-content a {
+    color: black;
+    font-family: 'Libre Franklin', sans-serif;
+    font-size: 13px;
+    margin: 0;
+    display: flex;
+    align-items: center;
+}
+
+.footer-content a:hover {
+    color: #0056b3;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.footer-content .stamp-logo {
+    width: 5vw; 
+    max-width: 60px; 
+    min-width: 40px; 
+    height: auto; 
+}
